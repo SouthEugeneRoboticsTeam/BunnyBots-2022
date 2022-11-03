@@ -3,8 +3,8 @@ package org.sert2521.bunnybots2022
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import org.sert2521.bunnybots2022.commands.teleop.JoystickDrive
-import org.sert2521.bunnybots2022.commands.test.RunTests
+import org.sert2521.bunnybots2022.commands.drivetrain.JoystickDrive
+import org.sert2521.bunnybots2022.commands.drivetrain.test.RunTests
 
 object Robot : TimedRobot() {
     private val commandScheduler = CommandScheduler.getInstance()

@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots2022.commands.test
+package org.sert2521.bunnybots2022.commands.drivetrain.test
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup
@@ -16,4 +16,5 @@ class RunTests : SequentialCommandGroup(
     Drive(ChassisSpeeds(0.0, 0.0, PI)).withTimeout(1.0),
     Drive(ChassisSpeeds(0.0, 0.0, -PI)).withTimeout(1.0),
     Drive(ChassisSpeeds(0.0, 0.0, PI)).withInterrupt(Input::getNext),
-    EnterBrakePos())
+    EnterBrakePos()
+)
