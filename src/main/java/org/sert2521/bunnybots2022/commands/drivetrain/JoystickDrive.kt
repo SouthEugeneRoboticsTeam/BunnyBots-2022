@@ -39,17 +39,17 @@ class JoystickDrive(private val fieldOrientated: Boolean) : CommandBase() {
         val diffTime = (currentTime - prevTime) / 1000.0
         prevTime = currentTime
 
-        val rateX = (x - currX) / diffTime
-        val rateY = (y - currY) / diffTime
+        val diffX = x - currX
+        val diffY = y - currY
 
-        val rateChangeSqr = rateX.pow(2) + rateY.pow(2)
-        if (rateChangeSqr <= constants.joystickChangeSpeed * constants.joystickChangeSpeed) {
+        val diffSqr = diffX.pow(2) + diffY.pow(2)
+        if (diffSqr <= constants.joystickChangeSpeed * constants.joystickChangeSpeed) {
             x = currX
             y = currY
         } else {
-            val rateChange = sqrt(rateChangeSqr)
-            x -= rateX * constants.joystickChangeSpeed / rateChange
-            y -= rateY * constants.joystickChangeSpeed / rateChange
+            val diff = sqrt(diffSqr)
+            x -= (diffX / diffTime) * constants.joystickChangeSpeed / diff
+            y -= (diffY / diffTime) * constants.joystickChangeSpeed / diff
         }
 
         var rot = Input.getRot() * constants.rotSpeed
