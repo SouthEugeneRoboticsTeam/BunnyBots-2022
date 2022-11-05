@@ -1,7 +1,5 @@
 package org.sert2521.bunnybots2022
 
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.trajectory.TrajectoryConfig
 import kotlin.math.PI
@@ -25,7 +23,7 @@ object TunableConstants {
     val autoForwardI = TunableNumber("Auto Forward I", 0.0)
     val autoForwardD = TunableNumber("Auto Forward D", 0.0)
 
-    val autoAngleP = TunableNumber("Auto Angle P", 0.0)//1.5)
+    val autoAngleP = TunableNumber("Auto Angle P", 2.5)
     val autoAngleI = TunableNumber("Auto Angle I", 0.0)
     val autoAngleD = TunableNumber("Auto Angle D", 0.0)
 
@@ -41,7 +39,8 @@ class Constants {
         SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 10, 5.26 - (PI / 2)),
         SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 3, 11, 0.29 + (PI / 2)),
         SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 12, 4.77 + (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 4, 9, 4.76 + (PI / 2)))
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 4, 9, 4.76 + (PI / 2))
+    )
 
     val swervePowerS = TunableConstants.swervePowerS.value
     val swervePowerV = TunableConstants.swervePowerV.value
@@ -86,9 +85,8 @@ class Constants {
 
     val visionDisRecalc = 0.2
     val visionRotRecalc = 0.3
-    val visionOffset = Pose2d(0.0, 0.0, Rotation2d(0.0))
 
-    val trajectoryConfig = TrajectoryConfig(2.0, 2.0)
+    val trajectoryConfig = TrajectoryConfig(2.0 * 0.1, 2.0)
 
     val tuning = false
 }

@@ -26,6 +26,8 @@ import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.pow
 
+// Rename lock to something more clear
+// Limit power and angle change to protect gears and change stop motor as well
 class SwerveModule(val powerMotor: TalonFX,
                    private val powerFeedforward: SimpleMotorFeedforward,
                    private val powerPID: PIDController,
@@ -104,7 +106,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
         modules = modulesList.toTypedArray()
 
         kinematics = SwerveDriveKinematics(*modulePositions.toTypedArray())
-        odometry = SwerveDriveOdometry(kinematics, -imu.rotation2d)
+        odometry = SwerveDriveOdometry(kinematics, imu.rotation2d)
 
         registerReload()
     }
@@ -142,14 +144,14 @@ object Drivetrain : SubsystemBase(), Reloadable {
             states.add(module.state)
         }
 
-        odometry.update(-imu.rotation2d, *states.toTypedArray())
+        odometry.update(imu.rotation2d, *states.toTypedArray())
     }
 
     // Getting poseMeters does not calculations
     var pose: Pose2d
         get() = odometry.poseMeters
         set(value) {
-            odometry.resetPosition(value, -imu.rotation2d)
+            odometry.resetPosition(value, imu.rotation2d)
         }
 
     fun getAccelSqr(): Double {

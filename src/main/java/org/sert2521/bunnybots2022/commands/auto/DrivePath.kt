@@ -7,9 +7,9 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.trajectory.Trajectory
 import edu.wpi.first.math.trajectory.TrapezoidProfile
 import edu.wpi.first.wpilibj2.command.CommandBase
+import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import org.sert2521.bunnybots2022.Reloadable
 import org.sert2521.bunnybots2022.constants
-import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import java.lang.System.currentTimeMillis
 
 class DrivePath(private val trajectory: Trajectory, private val angle: Rotation2d) : CommandBase(), Reloadable {

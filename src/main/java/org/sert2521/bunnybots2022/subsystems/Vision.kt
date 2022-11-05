@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import org.sert2521.bunnybots2022.constants
 import kotlin.math.atan2
 
 object Vision : SubsystemBase() {
@@ -23,9 +22,7 @@ object Vision : SubsystemBase() {
             val rawPos = targetPosEntry.getDoubleArray(DoubleArray(0))
             val rawRot = targetAngleEntry.getDoubleArray(DoubleArray(0))
             // Drivetrain.pose.translation may be from the previous periodic
-            val seenTrans = (Translation2d(rawPos[0], rawPos[2]).rotateBy(constants.visionOffset.rotation) + constants.visionOffset.translation)
-            val seenRot = Rotation2d(atan2(rawRot[1], rawRot[0])) + constants.visionOffset.rotation
-            Pose2d(seenTrans.rotateBy(Drivetrain.pose.rotation) + Drivetrain.pose.translation, seenRot)
+            Pose2d(Translation2d(-rawPos[0], -rawPos[2]).rotateBy(Drivetrain.pose.rotation) + Drivetrain.pose.translation, Rotation2d(atan2(rawRot[1], rawRot[0])))
         } else {
             null
         }
