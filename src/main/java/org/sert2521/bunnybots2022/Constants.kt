@@ -89,6 +89,10 @@ class Constants {
     val trajectoryConfig = TrajectoryConfig(2.0 * 0.1, 2.0)
 
     val tuning = false
+
+    val sparks = 0
+    val intakeSole = 0 //Test Solenoid
 }
 
 var constants = Constants()
+
