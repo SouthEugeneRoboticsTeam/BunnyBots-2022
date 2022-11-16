@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 
 object Indexer : SubsystemBase() {
-    //CODE HERE
     private val indexer = WPI_TalonSRX(-1)
 
     fun setIndexerSpeed(speed: Double) {

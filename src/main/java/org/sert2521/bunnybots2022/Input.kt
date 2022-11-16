@@ -17,6 +17,7 @@ object Input {
     private val autoChooser = SendableChooser<Command?>()
 
     init {
+        JoystickButton(controller,5).whenHeld(RunIndexer())
         autoChooser.setDefaultOption("Nothing", null)
         SmartDashboard.putData("Input/Auto", autoChooser)
     }
