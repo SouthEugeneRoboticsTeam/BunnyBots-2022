@@ -10,21 +10,24 @@ import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.wpilibj.MotorSafety
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.photonvision.PhotonCamera
 import org.sert2521.bunnybots2022.Reloadable
 import org.sert2521.bunnybots2022.SwerveModuleData
 import org.sert2521.bunnybots2022.constants
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.pow
+
 
 class SwerveModule(val powerMotor: TalonFX,
                    private val powerFeedforward: SimpleMotorFeedforward,
@@ -78,11 +81,15 @@ class SwerveModule(val powerMotor: TalonFX,
 }
 
 object Drivetrain : SubsystemBase(), Reloadable {
-    private val kinematics: SwerveDriveKinematics
     private val imu = AHRS()
-    private val odometry: SwerveDriveOdometry
+    private var camera = PhotonCamera("Vision")
 
+    private val kinematics: SwerveDriveKinematics
     private var modules: Array<SwerveModule>
+    private val poseEstimator: SwerveDrivePoseEstimator
+
+    var poseInited = false
+        private set
 
     init {
         val modulePositions = mutableListOf<Translation2d>()
@@ -104,7 +111,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
         modules = modulesList.toTypedArray()
 
         kinematics = SwerveDriveKinematics(*modulePositions.toTypedArray())
-        odometry = SwerveDriveOdometry(kinematics, -imu.rotation2d)
+        poseEstimator = SwerveDrivePoseEstimator(-imu.rotation2d, Pose2d(), kinematics, constants.stateDeviations, constants.localDeviations, constants.globalDeviations)
 
         registerReload()
     }
@@ -142,14 +149,29 @@ object Drivetrain : SubsystemBase(), Reloadable {
             states.add(module.state)
         }
 
-        odometry.update(-imu.rotation2d, *states.toTypedArray())
+        poseEstimator.update(-imu.rotation2d, *states.toTypedArray())
+
+        val target = camera.latestResult.targets.find { it.fiducialId == constants.visionTargetID }
+        if (target != null) {
+            val measurement = constants.targetPose.transformBy(target.bestCameraToTarget.inverse()).transformBy(constants.cameraTrans)
+
+            val deltaTime = Timer.getFPGATimestamp() - camera.latestResult.latencyMillis
+            if (poseInited) {
+                poseEstimator.addVisionMeasurement(measurement.toPose2d(), deltaTime)
+            } else {
+                // Equivalent to setting pose, but with latency
+                poseEstimator.addVisionMeasurement(measurement.toPose2d(), deltaTime, constants.startGlobalDeviations)
+                poseEstimator.setVisionMeasurementStdDevs(constants.globalDeviations)
+                poseInited = true
+            }
+        }
     }
 
     // Getting poseMeters does not calculations
     var pose: Pose2d
-        get() = odometry.poseMeters
+        get() = poseEstimator.estimatedPosition
         set(value) {
-            odometry.resetPosition(value, -imu.rotation2d)
+            poseEstimator.resetPosition(value, -imu.rotation2d)
         }
 
     fun getAccelSqr(): Double {

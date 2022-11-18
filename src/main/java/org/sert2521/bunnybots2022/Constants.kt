@@ -1,8 +1,11 @@
 package org.sert2521.bunnybots2022
 
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Matrix
+import edu.wpi.first.math.Nat
+import edu.wpi.first.math.geometry.*
+import edu.wpi.first.math.numbers.N1
+import edu.wpi.first.math.numbers.N3
 import edu.wpi.first.math.trajectory.TrajectoryConfig
 import kotlin.math.PI
 
@@ -84,9 +87,14 @@ class Constants {
 
     val rumbleFactor = 0.2
 
-    val visionDisRecalc = 0.2
-    val visionRotRecalc = 0.3
-    val visionOffset = Pose2d(0.0, 0.0, Rotation2d(0.0))
+    val targetPose = Pose3d()
+    val cameraTrans = Transform3d()
+    val visionTargetID = 0
+
+    val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.05, 0.05, 0.01)
+    val localDeviations: Matrix<N1, N1> = MatBuilder(Nat.N1(), Nat.N1()).fill(0.02)
+    val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.05)
+    val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
     val trajectoryConfig = TrajectoryConfig(2.0, 2.0)
 
