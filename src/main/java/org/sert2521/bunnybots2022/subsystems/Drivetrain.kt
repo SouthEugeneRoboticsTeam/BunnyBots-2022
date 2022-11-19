@@ -28,7 +28,6 @@ import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.pow
 
-
 class SwerveModule(val powerMotor: TalonFX,
                    private val powerFeedforward: SimpleMotorFeedforward,
                    private val powerPID: PIDController,
@@ -37,9 +36,17 @@ class SwerveModule(val powerMotor: TalonFX,
                    private val angleOffset: Double,
                    private val anglePID: PIDController,
                    private val centerRotation: Rotation2d,
-                   var state: SwerveModuleState) : MotorSafety() {
+                   var state: SwerveModuleState,
+                   shouldOptimize: Boolean) : MotorSafety() {
+    var doesOptimize = shouldOptimize
+        private set
+
     init {
-        anglePID.enableContinuousInput(-PI, PI)
+        if (doesOptimize) {
+            anglePID.enableContinuousInput(-PI, PI)
+        } else {
+            anglePID.enableContinuousInput(-PI * 2, PI * 2)
+        }
     }
 
     private fun getVelocity(): Double {
@@ -50,6 +57,16 @@ class SwerveModule(val powerMotor: TalonFX,
         return Rotation2d(angleEncoder.absolutePosition * constants.angleEncoderMultiplier - angleOffset)
     }
 
+    fun setOptimize(value: Boolean) {
+        doesOptimize = value
+
+        if (doesOptimize) {
+            anglePID.enableContinuousInput(-PI, PI)
+        } else {
+            anglePID.enableContinuousInput(-PI * 2, PI * 2)
+        }
+    }
+
     // Should be called in periodic
     fun updateState() {
         state = SwerveModuleState(getVelocity(), getAngle())
@@ -57,7 +74,11 @@ class SwerveModule(val powerMotor: TalonFX,
 
     fun set(wanted: SwerveModuleState) {
         // Using state because it should be updated and getVelocity and getAngle (probably) spend time over CAN
-        val optimized = SwerveModuleState.optimize(wanted, state.angle)
+        val optimized = if (doesOptimize) {
+            SwerveModuleState.optimize(wanted, state.angle)
+        } else {
+            wanted
+        }
 
         val feedforward = powerFeedforward.calculate(optimized.speedMetersPerSecond)
         val pid = powerPID.calculate(state.speedMetersPerSecond, optimized.speedMetersPerSecond)
@@ -88,7 +109,12 @@ object Drivetrain : SubsystemBase(), Reloadable {
     private var modules: Array<SwerveModule>
     private val poseEstimator: SwerveDrivePoseEstimator
 
+    var pose = Pose2d()
+        private set
     var poseInited = false
+        private set
+
+    var doesOptimize = constants.drivetrainOptimized
         private set
 
     init {
@@ -125,7 +151,8 @@ object Drivetrain : SubsystemBase(), Reloadable {
             moduleData.angleOffset,
             PIDController(constants.swerveAngleP, constants.swerveAngleI, constants.swerveAngleD),
             Rotation2d(atan2(moduleData.position.y, moduleData.position.x)),
-            SwerveModuleState())
+            SwerveModuleState(),
+            doesOptimize)
     }
 
     override fun reload() {
@@ -149,8 +176,6 @@ object Drivetrain : SubsystemBase(), Reloadable {
             states.add(module.state)
         }
 
-        poseEstimator.update(-imu.rotation2d, *states.toTypedArray())
-
         val target = camera.latestResult.targets.find { it.fiducialId == constants.visionTargetID }
         if (target != null) {
             val measurement = constants.targetPose.transformBy(target.bestCameraToTarget.inverse()).transformBy(constants.cameraTrans)
@@ -165,14 +190,17 @@ object Drivetrain : SubsystemBase(), Reloadable {
                 poseInited = true
             }
         }
+
+        pose = poseEstimator.update(-imu.rotation2d, *states.toTypedArray())
     }
 
-    // Getting poseMeters does not calculations
-    var pose: Pose2d
-        get() = poseEstimator.estimatedPosition
-        set(value) {
-            poseEstimator.resetPosition(value, -imu.rotation2d)
+    fun setOptimize(value: Boolean) {
+        doesOptimize = value
+
+        for (module in modules) {
+            module.setOptimize(doesOptimize)
         }
+    }
 
     fun getAccelSqr(): Double {
         return (imu.worldLinearAccelY.pow(2) + imu.worldLinearAccelX.pow(2)).toDouble()

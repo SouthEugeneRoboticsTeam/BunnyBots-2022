@@ -15,6 +15,8 @@ import org.sert2521.bunnybots2022.constants
 import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import kotlin.math.atan2
 
+// Maybe should recalculate if way off
+// Maybe should include current velocity in path generation
 class DriveDynamic(private val target: Pose2d) : CommandBase(), Reloadable {
     private var trajectory: Trajectory? = null
     private var angle: Rotation2d? = null

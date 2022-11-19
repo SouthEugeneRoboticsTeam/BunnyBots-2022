@@ -98,6 +98,8 @@ class Constants {
 
     val trajectoryConfig = TrajectoryConfig(2.0, 2.0)
 
+    val drivetrainOptimized = false
+
     val tuning = false
 }
 
