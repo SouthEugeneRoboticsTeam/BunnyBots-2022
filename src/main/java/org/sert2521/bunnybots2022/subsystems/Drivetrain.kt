@@ -8,19 +8,19 @@ import com.ctre.phoenix.sensors.CANCoder
 import com.kauailabs.navx.frc.AHRS
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
 import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.MotorSafety
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import org.photonvision.PhotonCamera
 import org.sert2521.bunnybots2022.Reloadable
 import org.sert2521.bunnybots2022.SwerveModuleData
 import org.sert2521.bunnybots2022.constants
@@ -103,11 +103,18 @@ class SwerveModule(val powerMotor: TalonFX,
 
 object Drivetrain : SubsystemBase(), Reloadable {
     private val imu = AHRS()
-    private var camera = PhotonCamera("Vision")
+
+    private val visionTable = NetworkTableInstance.getDefault().getTable("Vision")
+    private val isTargetEntry = visionTable.getEntry("Is Target")
+    private val targetLastUpdate = visionTable.getEntry("Last Update")
+    private val targetPoseEntry = visionTable.getEntry("Position")
+    private val targetAngleEntry = visionTable.getEntry("Rotation")
 
     private val kinematics: SwerveDriveKinematics
     private var modules: Array<SwerveModule>
     private val poseEstimator: SwerveDrivePoseEstimator
+
+    var prevLastUpdate = 0L
 
     var pose = Pose2d()
         private set
@@ -176,19 +183,27 @@ object Drivetrain : SubsystemBase(), Reloadable {
             states.add(module.state)
         }
 
-        val target = camera.latestResult.targets.find { it.fiducialId == constants.visionTargetID }
-        if (target != null) {
-            val measurement = constants.targetPose.transformBy(target.bestCameraToTarget.inverse()).transformBy(constants.cameraTrans)
+        val position = targetPoseEntry.getDoubleArray(DoubleArray(0))
+        val rotation = targetAngleEntry.getDoubleArray(DoubleArray(0))
+        val lastUpdate = targetLastUpdate.getNumber(0).toLong()
+        if (isTargetEntry.getBoolean(false) && lastUpdate != prevLastUpdate) {
+            val translation = Translation3d(position[0], position[1], position[2])
+            val measurement = Transform3d(translation, Rotation3d(MatBuilder(Nat.N3(), Nat.N3()).fill(*rotation)))
+            val visionEstimate = constants.targetPose.transformBy(measurement.inverse()).transformBy(constants.cameraTrans).toPose2d()
 
-            val deltaTime = Timer.getFPGATimestamp() - camera.latestResult.latencyMillis
-            if (poseInited) {
-                poseEstimator.addVisionMeasurement(measurement.toPose2d(), deltaTime)
-            } else {
-                // Equivalent to setting pose, but with latency
-                poseEstimator.addVisionMeasurement(measurement.toPose2d(), deltaTime, constants.startGlobalDeviations)
-                poseEstimator.setVisionMeasurementStdDevs(constants.globalDeviations)
-                poseInited = true
+            val deltaTime = Timer.getFPGATimestamp() - lastUpdate
+            if (deltaTime < constants.targetTimeout * 1000) {
+                if (poseInited) {
+                    poseEstimator.addVisionMeasurement(visionEstimate, deltaTime)
+                } else {
+                    // Equivalent to setting pose, but with latency
+                    poseEstimator.addVisionMeasurement(visionEstimate, deltaTime, constants.startGlobalDeviations)
+                    poseEstimator.setVisionMeasurementStdDevs(constants.globalDeviations)
+                    poseInited = true
+                }
             }
+
+            prevLastUpdate = lastUpdate
         }
 
         pose = poseEstimator.update(-imu.rotation2d, *states.toTypedArray())

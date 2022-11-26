@@ -87,9 +87,9 @@ class Constants {
 
     val rumbleFactor = 0.2
 
+    val targetTimeout = 0
     val targetPose = Pose3d()
     val cameraTrans = Transform3d()
-    val visionTargetID = 0
 
     val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.05, 0.05, 0.01)
     val localDeviations: Matrix<N1, N1> = MatBuilder(Nat.N1(), Nat.N1()).fill(0.02)
