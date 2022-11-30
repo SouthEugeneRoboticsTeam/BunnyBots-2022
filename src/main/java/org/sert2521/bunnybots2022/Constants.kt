@@ -89,6 +89,14 @@ class Constants {
     val trajectoryConfig = TrajectoryConfig(2.0 * 0.1, 2.0)
 
     val tuning = false
+
+    //Make sure to test these
+    val liftEncoderRatio = 0.0
+    val liftEncoderMax = 0.0
+
+    val liftCommandP = 0.0
+    val liftCommandI = 0.0
+    val liftCommandD = 0.0
 }
 
 var constants = Constants()
