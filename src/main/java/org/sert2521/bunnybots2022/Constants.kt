@@ -36,10 +36,10 @@ class Constants {
     // (diagonal length / 4) * sqrt of 2
     private val halfSideLength = (0.866 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 10, 5.26 - (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 3, 11, 0.29 + (PI / 2)),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 12, 4.77 + (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 4, 9, 4.76 + (PI / 2))
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 15, 5.26 - (PI / 2)),
+        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29 + (PI / 2)),
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 17, 4.77 + (PI / 2)),
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76 + (PI / 2))
     )
 
     val swervePowerS = TunableConstants.swervePowerS.value
@@ -88,10 +88,13 @@ class Constants {
 
     val trajectoryConfig = TrajectoryConfig(2.0 * 0.1, 2.0)
 
-    val tuning = false
+    val intakeForceOpenTime = 0.5
+    val intakeMotor = 4
+    val intakeSolenoid = Pair(0, 1)
+    val intakeButton = 3
+    val intakeSpeed = -0.7
 
-    val sparks = 0
-    val intakeSole = 0 //Test Solenoid
+    val tuning = false
 }
 
 var constants = Constants()

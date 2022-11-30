@@ -2,14 +2,14 @@ package org.sert2521.bunnybots2022.subsystems
 
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
+import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.PneumaticsModuleType
-import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.sert2521.bunnybots2022.constants
 
 object Intake : SubsystemBase() {
-    private val intakeMotor = CANSparkMax(constants.sparks, CANSparkMaxLowLevel.MotorType.kBrushless)
-    private val intakePneu = Solenoid(PneumaticsModuleType.CTREPCM, 1)
+    private val intakeMotor = CANSparkMax(constants.intakeMotor, CANSparkMaxLowLevel.MotorType.kBrushless)
+    private val intakePneu = DoubleSolenoid(PneumaticsModuleType.CTREPCM, constants.intakeSolenoid.first, constants.intakeSolenoid.second)
 
     fun intakeOn(speed: Double)  {
         intakeMotor.set(speed)
@@ -20,14 +20,14 @@ object Intake : SubsystemBase() {
     }
 
     fun pneuOn() {
-       intakePneu.set(true)
+       intakePneu.set(DoubleSolenoid.Value.kReverse)
+    }
+
+    fun pneuNeither() {
+        intakePneu.set(DoubleSolenoid.Value.kOff)
     }
 
     fun pneuStop() {
-        intakePneu.set(false)
-    }
-
-    fun pneuCheck() :Boolean {
-        return intakePneu.get()
+        intakePneu.set(DoubleSolenoid.Value.kForward)
     }
 }

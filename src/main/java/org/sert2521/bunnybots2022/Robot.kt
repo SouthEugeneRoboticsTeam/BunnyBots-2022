@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
 import org.sert2521.bunnybots2022.commands.drivetrain.JoystickDrive
 import org.sert2521.bunnybots2022.commands.drivetrain.test.RunTests
+import org.sert2521.bunnybots2022.subsystems.Intake
 
 object Robot : TimedRobot() {
     private val commandScheduler = CommandScheduler.getInstance()
@@ -13,6 +14,10 @@ object Robot : TimedRobot() {
     private val runTests = RunTests()
 
     private var currAuto: Command? = null
+
+    override fun robotInit() {
+        Intake.pneuOn()
+    }
 
     override fun robotPeriodic() {
         Input.update()

@@ -18,7 +18,7 @@ object Input {
 
     private val autoChooser = SendableChooser<Command?>()
 
-    private val buttonIntake = JoystickButton(controller, -1)
+    private val buttonIntake = JoystickButton(controller, constants.intakeButton)
 
     init {
         autoChooser.setDefaultOption("Nothing", null)
