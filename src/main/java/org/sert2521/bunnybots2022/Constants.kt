@@ -97,6 +97,10 @@ class Constants {
     val liftCommandP = 0.0
     val liftCommandI = 0.0
     val liftCommandD = 0.0
+
+    val liftBottomHeight = 0.0
+    val liftMiddleHeight = 0.0
+    val liftTopHeight = 0.0
 }
 
 var constants = Constants()
