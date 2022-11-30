@@ -34,11 +34,11 @@ object TunableConstants {
 // Maybe separate into true constants and tunable constants to make clear what needs to be reloaded
 class Constants {
     // (diagonal length / 4) * sqrt of 2
-    private val halfSideLength = (0.866 / 4) * 1.41421356237
+    private val halfSideLength = (0.885 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 15, 5.26 - (PI / 2)),
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI / 2)),
         SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29 + (PI / 2)),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 17, 4.77 + (PI / 2)),
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77 + (PI / 2)),
         SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76 + (PI / 2))
     )
 
@@ -90,9 +90,9 @@ class Constants {
 
     val intakeForceOpenTime = 0.5
     val intakeMotor = 4
-    val intakeSolenoid = Pair(0, 1)
+    val intakeSolenoid = Pair(7, 1)
     val intakeButton = 3
-    val intakeSpeed = -0.7
+    val intakeSpeed = 0.7
 
     val tuning = false
 }

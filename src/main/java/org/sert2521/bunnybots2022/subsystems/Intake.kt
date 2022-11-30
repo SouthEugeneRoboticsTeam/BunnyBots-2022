@@ -11,6 +11,10 @@ object Intake : SubsystemBase() {
     private val intakeMotor = CANSparkMax(constants.intakeMotor, CANSparkMaxLowLevel.MotorType.kBrushless)
     private val intakePneu = DoubleSolenoid(PneumaticsModuleType.CTREPCM, constants.intakeSolenoid.first, constants.intakeSolenoid.second)
 
+    init {
+        intakeMotor.inverted = true
+    }
+
     fun intakeOn(speed: Double)  {
         intakeMotor.set(speed)
     }
