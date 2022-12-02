@@ -16,6 +16,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry
 import edu.wpi.first.math.kinematics.SwerveModuleState
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.MotorSafety
@@ -112,11 +113,16 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
     private val kinematics: SwerveDriveKinematics
     private var modules: Array<SwerveModule>
+    private val odometry: SwerveDriveOdometry
     private val poseEstimator: SwerveDrivePoseEstimator
 
     var prevLastUpdate = 0L
 
     var pose = Pose2d()
+    var odometryPose = Pose2d()
+        private set
+        get() = odometry.poseMeters
+
     var poseInited = false
         private set
 
@@ -144,6 +150,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
         kinematics = SwerveDriveKinematics(*modulePositions.toTypedArray())
         poseEstimator = SwerveDrivePoseEstimator(-imu.rotation2d, Pose2d(), kinematics, constants.stateDeviations, constants.localDeviations, constants.globalDeviations)
+        odometry = SwerveDriveOdometry(kinematics, -imu.rotation2d)
 
         registerReload()
     }
@@ -206,6 +213,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
         }
 
         pose = poseEstimator.update(-imu.rotation2d, *states.toTypedArray())
+        odometry.update(-imu.rotation2d, *states.toTypedArray())
     }
 
     fun setOptimize(value: Boolean) {

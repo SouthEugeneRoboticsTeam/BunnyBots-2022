@@ -2,9 +2,9 @@ package org.sert2521.bunnybots2022.commands.drivetrain
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.wpilibj2.command.CommandBase
+import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import org.sert2521.bunnybots2022.Input
 import org.sert2521.bunnybots2022.constants
-import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import java.lang.System.currentTimeMillis
 import kotlin.math.abs
 import kotlin.math.pow
@@ -41,15 +41,14 @@ class JoystickDrive(private val fieldOrientated: Boolean) : CommandBase() {
 
         val diffX = x - currX
         val diffY = y - currY
-
-        val diffSqr = diffX.pow(2) + diffY.pow(2)
-        if (diffSqr <= constants.joystickChangeSpeed * constants.joystickChangeSpeed) {
+        val rateChangeSqr = diffX.pow(2) + diffY.pow(2)
+        if (rateChangeSqr <= constants.joystickChangeSpeed * constants.joystickChangeSpeed) {
             x = currX
             y = currY
         } else {
-            val diff = sqrt(diffSqr)
-            x -= (diffX / diffTime) * constants.joystickChangeSpeed / diff
-            y -= (diffY / diffTime) * constants.joystickChangeSpeed / diff
+            val rateChange = sqrt(rateChangeSqr) / diffTime
+            x -= diffX / diffTime * constants.joystickChangeSpeed / rateChange
+            y -= diffY / diffTime * constants.joystickChangeSpeed / rateChange
         }
 
         var rot = Input.getRot() * constants.rotSpeed
