@@ -36,10 +36,10 @@ class Constants {
     // (diagonal length / 4) * sqrt of 2
     private val halfSideLength = (0.885 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29 + (PI / 2)),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77 + (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76 + (PI / 2))
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI)),
+        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29),
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77),
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76)
     )
 
     val swervePowerS = TunableConstants.swervePowerS.value
