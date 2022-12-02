@@ -27,7 +27,7 @@ class DrivePath(private val trajectory: Trajectory, private val angle: Rotation2
         driveController = HolonomicDriveController(
             PIDController(constants.autoForwardP, constants.autoForwardI, constants.autoForwardD),
             PIDController(constants.autoForwardP, constants.autoForwardI, constants.autoForwardD),
-            ProfiledPIDController(-constants.autoAngleP, -constants.autoAngleI, -constants.autoAngleD,
+            ProfiledPIDController(constants.autoAngleP, constants.autoAngleI, constants.autoAngleD,
                 TrapezoidProfile.Constraints(constants.autoMaxVel, constants.autoMaxAcc)))
     }
 

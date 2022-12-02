@@ -41,10 +41,10 @@ class Constants {
     // (diagonal length / 4) * sqrt of 2
     private val halfSideLength = (0.885 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29 + (PI / 2)),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77 + (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76 + (PI / 2)))
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI)),
+        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29),
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77),
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76))
 
     val swervePowerS = TunableConstants.swervePowerS.value
     val swervePowerV = TunableConstants.swervePowerV.value
@@ -88,8 +88,8 @@ class Constants {
     val rumbleFactor = 0.2
 
     val targetTimeout = 0
-    val tagPose = Pose3d()
-    val cameraTrans = Transform3d()
+    val tagPose = Pose3d(0.0, 0.0, 0.0, Rotation3d(0.0, 0.0, 0.0))
+    val cameraTrans = Transform3d(Translation3d(0.0, 0.0, 0.0), Rotation3d(0.0, 0.0, -PI / 2))
 
     val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.05, 0.05, 0.01)
     val localDeviations: Matrix<N1, N1> = MatBuilder(Nat.N1(), Nat.N1()).fill(0.02)
@@ -98,7 +98,7 @@ class Constants {
 
     val trajectoryConfig = TrajectoryConfig(0.5, 0.5)
 
-    val drivetrainOptimized = false
+    val drivetrainOptimized = true
 
     val tuning = false
 }

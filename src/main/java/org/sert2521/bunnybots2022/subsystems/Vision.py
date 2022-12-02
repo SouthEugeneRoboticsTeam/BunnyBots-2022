@@ -284,7 +284,7 @@ if __name__ == "__main__":
                     vision_table.putNumberArray('Position', [value[0] for value in closest.pose_t])
                     vision_table.putNumberArray('Rotation', [value for row in closest.pose_R for value in row])
                     vision_table.putNumber('Last Update', start_time)
-                    vision_table.putBoolean('Is Target', False)
+                    vision_table.putBoolean('Is Target', True)
 
                     cv2.polylines(input_img, np.array([detection.corners for detection in detections], dtype=np.int32), True,
                                   (0, 255, 0), 4)

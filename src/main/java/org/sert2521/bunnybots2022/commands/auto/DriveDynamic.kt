@@ -22,7 +22,7 @@ class DriveDynamic(private val target: Pose2d) : CommandBase(), Reloadable {
     private var angle: Rotation2d? = null
 
     private lateinit var driveController: HolonomicDriveController
-    private var startTime: Long = 0
+    private var startTime: Double = 0.0
 
     init {
         addRequirements(Drivetrain)
@@ -37,7 +37,7 @@ class DriveDynamic(private val target: Pose2d) : CommandBase(), Reloadable {
         driveController = HolonomicDriveController(
             PIDController(constants.autoForwardP, constants.autoForwardI, constants.autoForwardD),
             PIDController(constants.autoForwardP, constants.autoForwardI, constants.autoForwardD),
-            ProfiledPIDController(-constants.autoAngleP, -constants.autoAngleI, -constants.autoAngleD,
+            ProfiledPIDController(constants.autoAngleP, constants.autoAngleI, constants.autoAngleD,
                 TrapezoidProfile.Constraints(constants.autoMaxVel, constants.autoMaxAcc))
         )
     }
@@ -51,16 +51,18 @@ class DriveDynamic(private val target: Pose2d) : CommandBase(), Reloadable {
     }
 
     override fun initialize() {
-        //if (!Drivetrain.poseInited) {
+        if (!Drivetrain.poseInited) {
             throw Exception("Drivetrain must be have an inited pose")
-        //}
+        }
 
         genTrajectory()
+
+        startTime = Timer.getFPGATimestamp()
     }
 
     override fun execute() {
         if (angle != null) {
-            val sample = trajectory?.sample((Timer.getFPGATimestamp() - startTime) / 1000)
+            val sample = trajectory?.sample((Timer.getFPGATimestamp() - startTime))
             if (sample != null) {
                 Drivetrain.drive(driveController.calculate(Drivetrain.pose, sample, angle))
             }
