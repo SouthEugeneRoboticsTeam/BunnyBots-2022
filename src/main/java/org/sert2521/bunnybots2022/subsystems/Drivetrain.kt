@@ -117,7 +117,6 @@ object Drivetrain : SubsystemBase(), Reloadable {
     var prevLastUpdate = 0L
 
     var pose = Pose2d()
-        private set
     var poseInited = false
         private set
 
