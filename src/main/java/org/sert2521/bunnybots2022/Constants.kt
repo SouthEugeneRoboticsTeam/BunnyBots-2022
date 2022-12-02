@@ -88,7 +88,6 @@ class Constants {
 
     val trajectoryConfig = TrajectoryConfig(2.0 * 0.1, 2.0)
 
-    val intakeForceOpenTime = 0.5
     val intakeMotor = 4
     val intakeSolenoid = Pair(7, 1)
     val intakeButton = 3
