@@ -273,7 +273,7 @@ if __name__ == "__main__":
                     continue
 
                 detections = detector.detect(cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY), estimate_tag_pose=True,
-                                             camera_params=cam_params, tag_size=0.15)
+                                             camera_params=cam_params, tag_size=0.2)
 
                 is_detection = len(detections) > 0
                 if is_detection:

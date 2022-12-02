@@ -28,23 +28,23 @@ object TunableConstants {
     val autoForwardI = TunableNumber("Auto Forward I", 0.0)
     val autoForwardD = TunableNumber("Auto Forward D", 0.0)
 
-    val autoAngleP = TunableNumber("Auto Angle P", 0.0)//1.5)
+    val autoAngleP = TunableNumber("Auto Angle P", 0.5)
     val autoAngleI = TunableNumber("Auto Angle I", 0.0)
     val autoAngleD = TunableNumber("Auto Angle D", 0.0)
 
-    val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 0.8)
-    val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 1.5)
+    val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 0.5)
+    val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 0.5)
 }
 
 // Maybe separate into true constants and tunable constants to make clear what needs to be reloaded
 class Constants {
     // (diagonal length / 4) * sqrt of 2
-    private val halfSideLength = (0.866 / 4) * 1.41421356237
+    private val halfSideLength = (0.885 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 10, 5.26 - (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 3, 11, 0.29 + (PI / 2)),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 12, 4.77 + (PI / 2)),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 4, 9, 4.76 + (PI / 2)))
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI / 2)),
+        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29 + (PI / 2)),
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77 + (PI / 2)),
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76 + (PI / 2)))
 
     val swervePowerS = TunableConstants.swervePowerS.value
     val swervePowerV = TunableConstants.swervePowerV.value
@@ -88,7 +88,7 @@ class Constants {
     val rumbleFactor = 0.2
 
     val targetTimeout = 0
-    val targetPose = Pose3d()
+    val tagPose = Pose3d()
     val cameraTrans = Transform3d()
 
     val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.05, 0.05, 0.01)
@@ -96,7 +96,7 @@ class Constants {
     val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.05)
     val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
-    val trajectoryConfig = TrajectoryConfig(2.0, 2.0)
+    val trajectoryConfig = TrajectoryConfig(0.5, 0.5)
 
     val drivetrainOptimized = false
 

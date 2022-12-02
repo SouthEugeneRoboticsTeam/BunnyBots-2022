@@ -188,7 +188,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
         if (isTargetEntry.getBoolean(false) && lastUpdate != prevLastUpdate) {
             val translation = Translation3d(position[0], position[1], position[2])
             val measurement = Transform3d(translation, Rotation3d(MatBuilder(Nat.N3(), Nat.N3()).fill(*rotation)))
-            val visionEstimate = constants.targetPose.transformBy(measurement.inverse()).transformBy(constants.cameraTrans).toPose2d()
+            val visionEstimate = constants.tagPose.transformBy(measurement.inverse()).transformBy(constants.cameraTrans).toPose2d()
 
             val deltaTime = Timer.getFPGATimestamp() - lastUpdate
             if (deltaTime < constants.targetTimeout * 1000) {
