@@ -107,6 +107,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
     private val visionTable = NetworkTableInstance.getDefault().getTable("Vision")
     private val isTargetEntry = visionTable.getEntry("Is Target")
+    // Last update is when the picture was taken
     private val targetLastUpdate = visionTable.getEntry("Last Update")
     private val targetPoseEntry = visionTable.getEntry("Position")
     private val targetAngleEntry = visionTable.getEntry("Rotation")
@@ -116,7 +117,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
     private val odometry: SwerveDriveOdometry
     private val poseEstimator: SwerveDrivePoseEstimator
 
-    var prevLastUpdate = 0L
+    var prevLastUpdate: Double? = null
 
     var pose = Pose2d()
     var odometryPose = Pose2d()
@@ -190,20 +191,21 @@ object Drivetrain : SubsystemBase(), Reloadable {
             states.add(module.state)
         }
 
+        // Technically small chance the entries are not synced (maybe)
         val position = targetPoseEntry.getDoubleArray(DoubleArray(0))
         val rotation = targetAngleEntry.getDoubleArray(DoubleArray(0))
-        val lastUpdate = targetLastUpdate.getNumber(0).toLong()
-        if (isTargetEntry.getBoolean(false) && lastUpdate != prevLastUpdate && Timer.getFPGATimestamp() - lastUpdate < constants.targetTimeout * 100) {
+        val lastUpdate = targetLastUpdate.getNumber(0) as Double
+        if (isTargetEntry.getBoolean(false) && prevLastUpdate != null && lastUpdate != prevLastUpdate) {
             val translation = Translation3d(position[2], position[0], position[1])
             val measurement = Transform3d(translation, Rotation3d(MatBuilder(Nat.N3(), Nat.N3()).fill(*rotation)))
             val visionEstimate = constants.tagPose.transformBy(measurement.inverse()).transformBy(constants.cameraTrans).toPose2d()
 
-            println(visionEstimate)
             if (poseInited) {
-                poseEstimator.addVisionMeasurement(visionEstimate, Timer.getFPGATimestamp())
+                // Should make sure lastUpdate is synced with Timer.getFPGATimestamp()
+                poseEstimator.addVisionMeasurement(visionEstimate, Timer.getFPGATimestamp() + prevLastUpdate!! - lastUpdate)
             } else {
-                // Equivalent to setting pose, but with latency
                 poseEstimator.resetPosition(visionEstimate, imu.rotation2d)
+                // Equivalent to setting pose, but with latency in theory
                 //poseEstimator.addVisionMeasurement(visionEstimate, Timer.getFPGATimestamp(), constants.startGlobalDeviations)
                 //poseEstimator.setVisionMeasurementStdDevs(constants.globalDeviations)
                 poseInited = true

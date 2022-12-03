@@ -87,9 +87,9 @@ class Constants {
 
     val rumbleFactor = 0.2
 
-    val targetTimeout = 0
-    val tagPose = Pose3d(0.0, 0.0, 0.0, Rotation3d(0.0, 0.0, 0.0))
-    val cameraTrans = Transform3d(Translation3d(0.0, 0.0, 0.0), Rotation3d(0.0, 0.0, -PI / 2))
+    val targetTimeout = 0.7
+    val tagPose = Pose3d(1.0, 0.0, 0.0, Rotation3d(0.0, 0.0, 0.0))
+    val cameraTrans = Transform3d(Translation3d(halfSideLength, 0.0, 0.0), Rotation3d(0.0, 0.0, 0.0))
 
     val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.05, 0.05, 0.01)
     val localDeviations: Matrix<N1, N1> = MatBuilder(Nat.N1(), Nat.N1()).fill(0.02)
