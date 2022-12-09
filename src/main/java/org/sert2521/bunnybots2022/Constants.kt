@@ -88,6 +88,15 @@ class Constants {
 
     val trajectoryConfig = TrajectoryConfig(2.0 * 0.1, 2.0)
 
+    val outtakeFlapMotorID = -1
+    val outtakeIndexingMotorID = -1
+    val outtakeAtTopPing = -1
+    val outtakeAtBottomPin = -1
+
+    val outtakeFlapSpeed = 0.0
+    val outtakeIndexDefaultSpeed = 0.0
+    val outtakeIndexFastSpeed = 0.0
+
     val tuning = false
 }
 
