@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import org.sert2521.bunnybots2022.commands.IntakeCommand
 import org.sert2521.bunnybots2022.subsystems.Drivetrain
 
 object Input {
@@ -19,11 +17,14 @@ object Input {
     private val autoChooser = SendableChooser<Command?>()
 
     private val buttonIntake = JoystickButton(controller, constants.intakeButton)
+    private val buttonIndex = JoystickButton(controller,5)
 
     init {
         autoChooser.setDefaultOption("Nothing", null)
         SmartDashboard.putData("Input/Auto", autoChooser)
+
         buttonIntake.whileHeld(IntakeCommand())
+        buttonIndex.whenHeld(RunIndexer())
     }
 
     fun update() {
