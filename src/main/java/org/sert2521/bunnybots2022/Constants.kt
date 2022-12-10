@@ -101,6 +101,18 @@ class Constants {
     val drivetrainOptimized = true
 
     val tuning = false
+
+    //Make sure to test these
+    val liftEncoderRatio = 0.0
+    val liftEncoderMax = 0.0
+
+    val liftCommandP = 0.0
+    val liftCommandI = 0.0
+    val liftCommandD = 0.0
+
+    val liftBottomHeight = 0.0
+    val liftMiddleHeight = 0.0
+    val liftTopHeight = 0.0
 }
 
 var constants = Constants()
