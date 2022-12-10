@@ -32,6 +32,7 @@ object Input {
         currNext = controller.aButton
 
         if (controller.bButton) {
+            // Remove
             Drivetrain.pose = Pose2d(Drivetrain.pose.translation, Rotation2d(0.0))
         }
     }

@@ -1,6 +1,11 @@
 package org.sert2521.bunnybots2022
 
-import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.MatBuilder
+import edu.wpi.first.math.Matrix
+import edu.wpi.first.math.Nat
+import edu.wpi.first.math.geometry.*
+import edu.wpi.first.math.numbers.N1
+import edu.wpi.first.math.numbers.N3
 import edu.wpi.first.math.trajectory.TrajectoryConfig
 import kotlin.math.PI
 
@@ -23,12 +28,12 @@ object TunableConstants {
     val autoForwardI = TunableNumber("Auto Forward I", 0.0)
     val autoForwardD = TunableNumber("Auto Forward D", 0.0)
 
-    val autoAngleP = TunableNumber("Auto Angle P", 2.5)
+    val autoAngleP = TunableNumber("Auto Angle P", 0.5)
     val autoAngleI = TunableNumber("Auto Angle I", 0.0)
     val autoAngleD = TunableNumber("Auto Angle D", 0.0)
 
-    val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 0.8)
-    val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 1.5)
+    val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 0.5)
+    val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 0.5)
 }
 
 // Maybe separate into true constants and tunable constants to make clear what needs to be reloaded
@@ -39,8 +44,7 @@ class Constants {
         SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI)),
         SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29),
         SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76)
-    )
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76))
 
     val swervePowerS = TunableConstants.swervePowerS.value
     val swervePowerV = TunableConstants.swervePowerV.value
@@ -83,24 +87,18 @@ class Constants {
 
     val rumbleFactor = 0.2
 
-    val visionDisRecalc = 0.2
-    val visionRotRecalc = 0.3
+    val targetTimeout = 0.7
+    val tagPose = Pose3d(1.0, 0.0, 0.0, Rotation3d(0.0, 0.0, 0.0))
+    val cameraTrans = Transform3d(Translation3d(halfSideLength, 0.0, 0.0), Rotation3d(0.0, 0.0, 0.0))
 
-    val trajectoryConfig = TrajectoryConfig(2.0 * 0.1, 2.0)
+    val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.05, 0.05, 0.01)
+    val localDeviations: Matrix<N1, N1> = MatBuilder(Nat.N1(), Nat.N1()).fill(0.02)
+    val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.05)
+    val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
-    val intakeMotor = 4
-    val intakeSolenoid = Pair(7, 1)
-    val intakeButton = 3
-    val intakeSpeed = 0.7
+    val trajectoryConfig = TrajectoryConfig(0.5, 0.5)
 
-    val outtakeFlapMotorID = -1
-    val outtakeIndexingMotorID = -1
-    val outtakeAtTopPing = -1
-    val outtakeAtBottomPin = -1
-
-    val outtakeFlapSpeed = 0.0
-    val outtakeIndexDefaultSpeed = 0.0
-    val outtakeIndexFastSpeed = 0.0
+    val drivetrainOptimized = true
 
     val tuning = false
 }

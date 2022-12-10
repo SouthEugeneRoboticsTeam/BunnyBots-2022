@@ -1,8 +1,13 @@
 package org.sert2521.bunnybots2022
 
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.Compressor
+import edu.wpi.first.wpilibj.PneumaticsModuleType
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import org.sert2521.bunnybots2022.commands.auto.DriveDynamic
 import org.sert2521.bunnybots2022.commands.drivetrain.JoystickDrive
 import org.sert2521.bunnybots2022.commands.drivetrain.test.RunTests
 import org.sert2521.bunnybots2022.subsystems.Intake
@@ -10,6 +15,7 @@ import org.sert2521.bunnybots2022.subsystems.Intake
 object Robot : TimedRobot() {
     private val commandScheduler = CommandScheduler.getInstance()
 
+    private val driveDynamic = DriveDynamic(Pose2d(0.0, -1.0, Rotation2d(0.0)))
     private val joystickDrive = JoystickDrive(true)
     private val runTests = RunTests()
 
@@ -41,11 +47,11 @@ object Robot : TimedRobot() {
 
     override fun autonomousInit() {
         currAuto = Input.getAuto()
-        currAuto?.schedule()
+        driveDynamic?.schedule()
     }
 
     override fun autonomousExit() {
-        currAuto?.cancel()
+        driveDynamic?.cancel()
     }
 
     override fun testInit() {
