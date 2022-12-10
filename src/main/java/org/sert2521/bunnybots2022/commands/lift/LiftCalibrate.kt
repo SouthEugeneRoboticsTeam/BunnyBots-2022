@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots2022.commands
+package org.sert2521.bunnybots2022.commands.lift
 
 import edu.wpi.first.wpilibj2.command.CommandBase
 import org.sert2521.bunnybots2022.subsystems.Lift

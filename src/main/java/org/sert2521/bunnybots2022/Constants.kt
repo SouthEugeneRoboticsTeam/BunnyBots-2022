@@ -113,6 +113,8 @@ class Constants {
     val liftBottomHeight = 0.0
     val liftMiddleHeight = 0.0
     val liftTopHeight = 0.0
+
+    val intakeSpeed = 0.0
 }
 
 var constants = Constants()

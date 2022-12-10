@@ -9,22 +9,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import org.sert2521.bunnybots2022.commands.LiftSetHeight
-import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import org.sert2521.bunnybots2022.commands.IntakeCommand
-import org.sert2521.bunnybots2022.commands.RunIndexer
+import org.sert2521.bunnybots2022.commands.lift.LiftSetHeight
+import org.sert2521.bunnybots2022.commands.intake.IntakeCommand
+import org.sert2521.bunnybots2022.commands.indexer.RunIndexer
 import org.sert2521.bunnybots2022.subsystems.Drivetrain
 
 object Input {
     private val xboxController = XboxController(0)
+    private val gunnerController = Joystick(1)
+
     private var prevNext = false
     private var currNext = false
-    private val gunnerController = Joystick(1)
 
     private val autoChooser = SendableChooser<Command?>()
 
-    private val buttonIntake = JoystickButton(controller, 4)
-    private val buttonIndex = JoystickButton(controller,5)
+    private val buttonIntake = JoystickButton(xboxController, 4)
+    private val buttonIndex = JoystickButton(xboxController,5)
 
     private val liftBottom = JoystickButton(gunnerController, 1)
     private val liftMiddle = JoystickButton(gunnerController, 2)
