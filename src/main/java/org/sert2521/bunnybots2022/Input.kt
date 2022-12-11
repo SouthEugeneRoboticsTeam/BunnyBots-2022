@@ -1,7 +1,5 @@
 package org.sert2521.bunnybots2022
 
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Joystick
 import edu.wpi.first.wpilibj.XboxController
@@ -12,7 +10,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton
 import org.sert2521.bunnybots2022.commands.lift.LiftSetHeight
 import org.sert2521.bunnybots2022.commands.intake.IntakeCommand
 import org.sert2521.bunnybots2022.commands.indexer.RunIndexer
-import org.sert2521.bunnybots2022.subsystems.Drivetrain
+import org.sert2521.bunnybots2022.outtake.HoldOpenOuttake
+import org.sert2521.bunnybots2022.outtake.IndexOuttake
+import org.sert2521.bunnybots2022.outtake.OuttakeTubes
 
 object Input {
     private val xboxController = XboxController(0)
@@ -30,6 +30,10 @@ object Input {
     private val liftMiddle = JoystickButton(gunnerController, 2)
     private val liftTop = JoystickButton(gunnerController, 3)
 
+    private val outtake = JoystickButton(gunnerController, 4)
+
+    private var liftUp = false
+
     init {
         autoChooser.setDefaultOption("Nothing", null)
         SmartDashboard.putData("Input/Auto", autoChooser)
@@ -37,19 +41,40 @@ object Input {
         buttonIntake.whileHeld(IntakeCommand())
         buttonIndex.whenHeld(RunIndexer())
 
-        liftBottom.whenPressed(LiftSetHeight(constants.liftBottomHeight, false))
-        liftMiddle.whenPressed(LiftSetHeight(constants.liftMiddleHeight, false))
-        liftTop.whenPressed(LiftSetHeight(constants.liftTopHeight, false))
+        liftBottom.whenPressed {
+            LiftSetHeight(constants.liftTopHeight, false).schedule()
+            HoldOpenOuttake().schedule()
+            liftUp = true
+            setOf()
+        }
+
+        liftMiddle.whenPressed {
+            LiftSetHeight(constants.liftMiddleHeight, false).schedule()
+            HoldOpenOuttake().schedule()
+            liftUp = true
+            setOf()
+        }
+
+        liftTop.whenPressed {
+            LiftSetHeight(constants.liftBottomHeight, false).schedule()
+            IndexOuttake().schedule()
+            liftUp = false
+            setOf()
+        }
+
+        outtake.whenHeld {
+            if (liftUp) {
+                OuttakeTubes(null).schedule()
+            }
+
+            setOf()
+        }
     }
 
     fun update() {
         // Remove
         prevNext = currNext
         currNext = xboxController.aButton
-
-        if (xboxController.bButton) {
-            Drivetrain.pose = Pose2d(Drivetrain.pose.translation, Rotation2d(0.0))
-        }
     }
 
     fun getY(): Double {
