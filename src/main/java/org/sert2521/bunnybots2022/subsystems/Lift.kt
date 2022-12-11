@@ -9,6 +9,7 @@ import org.sert2521.bunnybots2022.constants
 object Lift : SubsystemBase() {
     val motor = CANSparkMax(-1, CANSparkMaxLowLevel.MotorType.kBrushless)
     val liftDownLimitSwitch = DigitalInput(-1)
+
     override fun periodic(){
         if(liftDownLimitSwitch.get()) {
             motor.encoder.position = 0.0

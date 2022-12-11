@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.numbers.N1
 import edu.wpi.first.math.numbers.N3
 import edu.wpi.first.math.trajectory.TrajectoryConfig
+import edu.wpi.first.math.trajectory.TrajectoryGenerator
+import org.sert2521.bunnybots2022.commands.auto.DrivePath
 import kotlin.math.PI
 
 data class SwerveModuleData(val position: Translation2d, val powerMotorID: Int, val angleMotorID: Int, val angleEncoderID: Int, val angleOffset: Double)
@@ -97,6 +99,10 @@ class Constants {
     val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
     val trajectoryConfig = TrajectoryConfig(0.5, 0.5)
+    private val startFillPose = Pose2d(-1.0, 0.0, Rotation2d(0.0))
+    private val touchingFillPose = Pose2d(-halfSideLength / 0.9, 0.0, Rotation2d(0.0))
+    val toTouching = DrivePath(TrajectoryGenerator.generateTrajectory(startFillPose, mutableListOf(), touchingFillPose, trajectoryConfig), Rotation2d(0.0))
+    val fromTouching = DrivePath(TrajectoryGenerator.generateTrajectory(touchingFillPose, mutableListOf(), startFillPose, trajectoryConfig), Rotation2d(0.0))
 
     val drivetrainOptimized = true
 
@@ -109,10 +115,25 @@ class Constants {
     val liftCommandP = 0.0
     val liftCommandI = 0.0
     val liftCommandD = 0.0
+    val liftCommandTolerance = 0.0
 
     val liftBottomHeight = 0.0
     val liftMiddleHeight = 0.0
     val liftTopHeight = 0.0
+
+    val intakeMotor = -1
+    val intakeSolenoid = Pair(-1, -1)
+
+    val outtakeFlapMotorID = -1
+    val outtakeIndexingMotorID = -1
+    val outtakeAtTopPin = -1
+    val outtakeAtBottomPin = -1
+
+    val outtakeFlapSpeed = 0.0
+    val outtakeConversionFactor = 0.0
+    val outtakeDefaultSpeed = 0.0
+    val outtakeExhaleSpeed = 0.0
+    val outtakeOneDistance = 0.0
 
     val intakeSpeed = 0.0
 }

@@ -14,28 +14,44 @@ object Outtake : SubsystemBase() {
     private val flapMotor = TalonSRX(constants.outtakeFlapMotorID)
     private val indexingMotor = CANSparkMax(constants.outtakeIndexingMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
-    private val atOpen = DigitalInput(constants.outtakeAtTopPing)
+    private val atOpen = DigitalInput(constants.outtakeAtTopPin)
     private val atClosed = DigitalInput(constants.outtakeAtBottomPin)
 
-    var outtaking = false
+    var openingFlap = false
 
     override fun periodic() {
-        if (outtaking) {
-            if (!atOpen.get()) {
+        if (openingFlap) {
+            if (!isOpen()) {
                 flapMotor.set(ControlMode.PercentOutput, constants.outtakeFlapSpeed)
-                indexingMotor.set(0.0)
             } else {
                 flapMotor.set(ControlMode.PercentOutput, 0.0)
-                indexingMotor.set(constants.outtakeIndexFastSpeed)
             }
         } else {
-            if (!atClosed.get()) {
+            if (!isClosed()) {
                 flapMotor.set(ControlMode.PercentOutput, -constants.outtakeFlapSpeed)
-                indexingMotor.set(0.0)
             } else {
                 flapMotor.set(ControlMode.PercentOutput, 0.0)
-                indexingMotor.set(constants.outtakeIndexDefaultSpeed)
             }
         }
+    }
+
+    fun setOuttakeSpeed(speed: Double) {
+        indexingMotor.set(speed)
+    }
+
+    fun getSpinAmount(): Double {
+        return indexingMotor.encoder.position * constants.outtakeConversionFactor
+    }
+
+    fun isOpen(): Boolean {
+        return atOpen.get()
+    }
+
+    fun isClosed(): Boolean {
+        return atClosed.get()
+    }
+
+    fun stop() {
+        indexingMotor.stopMotor()
     }
 }

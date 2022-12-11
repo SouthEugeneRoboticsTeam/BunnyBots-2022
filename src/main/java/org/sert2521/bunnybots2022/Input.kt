@@ -37,17 +37,17 @@ object Input {
         buttonIntake.whileHeld(IntakeCommand())
         buttonIndex.whenHeld(RunIndexer())
 
-        liftBottom.whenPressed(LiftSetHeight(constants.liftBottomHeight))
-        liftMiddle.whenPressed(LiftSetHeight(constants.liftMiddleHeight))
-        liftTop.whenPressed(LiftSetHeight(constants.liftTopHeight))
+        liftBottom.whenPressed(LiftSetHeight(constants.liftBottomHeight, false))
+        liftMiddle.whenPressed(LiftSetHeight(constants.liftMiddleHeight, false))
+        liftTop.whenPressed(LiftSetHeight(constants.liftTopHeight, false))
     }
 
     fun update() {
+        // Remove
         prevNext = currNext
         currNext = xboxController.aButton
 
         if (xboxController.bButton) {
-            // Remove
             Drivetrain.pose = Pose2d(Drivetrain.pose.translation, Rotation2d(0.0))
         }
     }
