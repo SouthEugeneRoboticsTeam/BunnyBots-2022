@@ -15,7 +15,7 @@ class TunableNumber(private val name: String, var value: Double) {
     init {
         Tuning.tunableNumbers.add(this)
 
-        SmartDashboard.putNumber(name, value)
+        SmartDashboard.putNumber("Tuning/$name", value)
     }
 
     fun update(): Boolean {

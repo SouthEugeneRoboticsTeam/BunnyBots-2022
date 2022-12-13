@@ -2,16 +2,26 @@ package org.sert2521.bunnybots2022.commands.lift
 
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.wpilibj2.command.CommandBase
-import org.sert2521.bunnybots2022.constants
+import org.sert2521.bunnybots2022.Reloadable
+import org.sert2521.bunnybots2022.TunableConstants
 import org.sert2521.bunnybots2022.subsystems.Lift
 
-class LiftSetHeight(private val height: Double, private val finish: Boolean) : CommandBase() {
-    private val pid = PIDController(constants.liftCommandP, constants.liftCommandI, constants.liftCommandD)
+// Could use more advanced control loop (maybe sysid)
+class LiftSetHeight(private val height: Double, private val finish: Boolean) : CommandBase(), Reloadable {
+    private lateinit var pid: PIDController
+    private var liftG: Double = 0.0
 
     init {
         addRequirements(Lift)
 
-        pid.setTolerance(constants.liftCommandTolerance)
+        registerReload()
+
+        initPID()
+    }
+
+    private fun initPID() {
+        pid = PIDController(TunableConstants.liftP.value, TunableConstants.liftI.value, TunableConstants.liftD.value)
+        liftG = TunableConstants.liftG.value
     }
 
     override fun initialize(){
@@ -28,5 +38,9 @@ class LiftSetHeight(private val height: Double, private val finish: Boolean) : C
 
     override fun end(interrupted: Boolean) {
         Lift.stop()
+    }
+
+    override fun reload() {
+        initPID()
     }
 }

@@ -7,12 +7,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
-import org.sert2521.bunnybots2022.commands.lift.LiftSetHeight
 import org.sert2521.bunnybots2022.commands.intake.IntakeCommand
-import org.sert2521.bunnybots2022.commands.indexer.RunIndexer
-import org.sert2521.bunnybots2022.outtake.HoldOpenOuttake
-import org.sert2521.bunnybots2022.outtake.IndexOuttake
-import org.sert2521.bunnybots2022.outtake.OuttakeTubes
+import org.sert2521.bunnybots2022.commands.outtake.HoldOpenOuttake
+import org.sert2521.bunnybots2022.commands.outtake.IndexOuttake
+import org.sert2521.bunnybots2022.commands.outtake.OuttakeTubes
 
 object Input {
     private val xboxController = XboxController(0)
@@ -23,14 +21,13 @@ object Input {
 
     private val autoChooser = SendableChooser<Command?>()
 
-    private val buttonIntake = JoystickButton(xboxController, 4)
-    private val buttonIndex = JoystickButton(xboxController,5)
+    private val buttonIntake = JoystickButton(gunnerController, 4)
 
-    private val liftBottom = JoystickButton(gunnerController, 1)
+    private val liftBottom = JoystickButton(gunnerController, 3)
     private val liftMiddle = JoystickButton(gunnerController, 2)
-    private val liftTop = JoystickButton(gunnerController, 3)
+    private val liftTop = JoystickButton(gunnerController, 1)
 
-    private val outtake = JoystickButton(gunnerController, 4)
+    private val outtake = JoystickButton(gunnerController, 0)
 
     private var liftUp = false
 
@@ -38,25 +35,24 @@ object Input {
         autoChooser.setDefaultOption("Nothing", null)
         SmartDashboard.putData("Input/Auto", autoChooser)
 
-        buttonIntake.whileHeld(IntakeCommand())
-        buttonIndex.whenHeld(RunIndexer())
+        buttonIntake.whenHeld(IntakeCommand())
 
         liftBottom.whenPressed {
-            LiftSetHeight(constants.liftTopHeight, false).schedule()
+            //LiftSetHeight(constants.liftTopHeight, false).schedule()
             HoldOpenOuttake().schedule()
             liftUp = true
             setOf()
         }
 
         liftMiddle.whenPressed {
-            LiftSetHeight(constants.liftMiddleHeight, false).schedule()
+            //LiftSetHeight(constants.liftMiddleHeight, false).schedule()
             HoldOpenOuttake().schedule()
             liftUp = true
             setOf()
         }
 
         liftTop.whenPressed {
-            LiftSetHeight(constants.liftBottomHeight, false).schedule()
+            //LiftSetHeight(constants.liftBottomHeight, false).schedule()
             IndexOuttake().schedule()
             liftUp = false
             setOf()

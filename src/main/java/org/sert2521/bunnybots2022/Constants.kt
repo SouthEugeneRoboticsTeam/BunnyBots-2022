@@ -36,6 +36,12 @@ object TunableConstants {
 
     val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 0.5)
     val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 0.5)
+
+    val liftP = TunableNumber("Lift P", 0.0)//0.08)
+    val liftI = TunableNumber("Lift I", 0.0)
+    val liftD = TunableNumber("Lift D", 0.0)
+    val liftG = TunableNumber("Lift G", 0.0)
+    val liftTolerance = TunableNumber("Lift Tolerance", 0.0)
 }
 
 // Maybe separate into true constants and tunable constants to make clear what needs to be reloaded
@@ -108,32 +114,35 @@ class Constants {
 
     val tuning = false
 
-    //Make sure to test these
-    val liftEncoderRatio = 0.0
-    val liftEncoderMax = 0.0
+    val liftEncoderMax = 37.0 * 2.54
+    val liftEncoderRatio = liftEncoderMax * 0.76847106218338
 
-    val liftCommandP = 0.0
-    val liftCommandI = 0.0
-    val liftCommandD = 0.0
-    val liftCommandTolerance = 0.0
+    val liftCalibrateSpeed = -0.1
 
     val liftBottomHeight = 0.0
-    val liftMiddleHeight = 0.0
-    val liftTopHeight = 0.0
+    val liftMiddleHeight = 15.0
+    val liftTopHeight = 35.0
 
-    val intakeMotor = -1
-    val intakeSolenoid = Pair(-1, -1)
+    val intakeMotor = 4
+    val intakeSolenoid = Pair(1, 7)
 
-    val outtakeFlapMotorID = -1
-    val outtakeIndexingMotorID = -1
-    val outtakeAtTopPin = -1
-    val outtakeAtBottomPin = -1
+    val outtakeFlapMotorID = 12
+    val outtakeIndexingMotorID = 3
+    val outtakeAtTopPin = 8
+    val outtakeAtBottomPin = 9
 
-    val outtakeFlapSpeed = 0.0
+    val outtakeFlapSpeed = 0.3
     val outtakeConversionFactor = 0.0
-    val outtakeDefaultSpeed = 0.0
-    val outtakeExhaleSpeed = 0.0
+    val outtakeDefaultSpeed = 0.7
+    val outtakeExhaleSpeed = 0.8
     val outtakeOneDistance = 0.0
+
+    val indexerMotorID = 13
+    val indexerSpeed = 0.0
+
+    val liftMotorID = 9
+    val liftUpSwitchID = 7
+    val liftDownSwitchID = 6
 
     val intakeSpeed = 0.0
 }
