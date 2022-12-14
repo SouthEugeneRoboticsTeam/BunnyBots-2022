@@ -10,13 +10,12 @@ import org.sert2521.bunnybots2022.commands.outtake.OuttakeTubes
 class FillRow : SequentialCommandGroup() {
     init {
         addCommands(
-            constants.toTouching.deadlineWith(LiftSetHeight(constants.liftTopHeight, false)),
-            OuttakeTubes(1).deadlineWith(LiftSetHeight(constants.liftTopHeight, false)),
-            constants.fromTouching.deadlineWith(LiftSetHeight(constants.liftTopHeight, false)),
-            OuttakeTubes(1).deadlineWith(LiftSetHeight(constants.liftMiddleHeight, false)),
-            LiftSetHeight(constants.liftMiddleHeight, true),
             constants.toTouching.deadlineWith(LiftSetHeight(constants.liftMiddleHeight, false)),
-            OuttakeTubes(null).deadlineWith(LiftSetHeight(constants.liftMiddleHeight, false)),
+            OuttakeTubes(1).deadlineWith(LiftSetHeight(constants.liftMiddleHeight, false)),
+            constants.fromTouching.deadlineWith(LiftSetHeight(constants.liftMiddleHeight, false)),
+            LiftSetHeight(constants.liftTopHeight, true),
+            constants.toTouching.deadlineWith(LiftSetHeight(constants.liftTopHeight, false)),
+            OuttakeTubes(null).deadlineWith(LiftSetHeight(constants.liftTopHeight, false)),
         )
     }
 }

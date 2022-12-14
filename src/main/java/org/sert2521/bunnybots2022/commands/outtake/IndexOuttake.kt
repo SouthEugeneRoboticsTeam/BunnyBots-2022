@@ -16,7 +16,7 @@ class IndexOuttake : CommandBase() {
 
     override fun execute() {
         if (Outtake.isClosed()) {
-            Outtake.setOuttakeSpeed(constants.outtakeDefaultSpeed)
+            Outtake.speedSetpoint = constants.outtakeDefaultSpeed
         } else {
             Outtake.stop()
         }

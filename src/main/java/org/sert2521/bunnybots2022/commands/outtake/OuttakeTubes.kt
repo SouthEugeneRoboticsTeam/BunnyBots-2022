@@ -20,7 +20,7 @@ class OuttakeTubes(private val amount: Int?) : CommandBase() {
 
     override fun execute() {
         if (Outtake.isOpen()) {
-            Outtake.setOuttakeSpeed(constants.outtakeExhaleSpeed)
+            Outtake.speedSetpoint = constants.outtakeExhaleSpeed
         } else {
             Outtake.stop()
         }

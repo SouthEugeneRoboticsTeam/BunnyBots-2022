@@ -10,7 +10,8 @@ object Lift : SubsystemBase() {
     private val motor = CANSparkMax(constants.liftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
     private val liftUpLimitSwitch = DigitalInput(constants.liftUpSwitchID)
     private val liftDownLimitSwitch = DigitalInput(constants.liftDownSwitchID)
-    private var unset = true
+    var unset = true
+        private set
 
     init {
         motor.idleMode = CANSparkMax.IdleMode.kBrake
@@ -20,21 +21,21 @@ object Lift : SubsystemBase() {
         if (atTop()) {
             motor.encoder.position = constants.liftEncoderMax
             unset = false
-        }
 
-        if(atBottom()) {
-            motor.encoder.position = 0.0
+            if (motor.get() > 0) {
+                motor.stopMotor()
+            }
+        } else if (atBottom()) {
+            motor.encoder.position = constants.liftBottomHeight
             unset = false
+
+            if (motor.get() < 0) {
+                motor.stopMotor()
+            }
         }
 
-        if(getHeight() >= constants.liftEncoderMax) {
-            if(motor.get()>0){
-                motor.stopMotor()
-            }
-        }else if(getHeight()<=0.0) {
-            if(motor.get()<0) {
-                motor.stopMotor()
-            }
+        if (unset) {
+            motor.set(constants.liftCalibrateSpeed)
         }
     }
 
@@ -51,12 +52,15 @@ object Lift : SubsystemBase() {
     }
 
     fun setMotor(speed: Double) {
-        if((getHeight() >= constants.liftEncoderMax) && (speed > 0.0)) {
+        if (unset) {
+            return
+        } else if((getHeight() >= constants.liftEncoderMax) && (speed > 0.0)) {
             return
         }else if((getHeight() <= 0.0) && (speed < 0.0)) {
             return
         }
-        //motor.set(speed)
+
+        motor.set(speed)
     }
 
     fun atBottom(): Boolean {

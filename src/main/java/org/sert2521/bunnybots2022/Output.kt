@@ -14,6 +14,7 @@ object Output {
     init {
         values.add(Pair("Acceleration") { Drivetrain.getAccelSqr() })
         values.add(Pair("Lift Height") { Lift.getHeight() } )
+        values.add(Pair("Outtake Spin") { Outtake.getSpinAmount() } )
 
         bools.add(Pair("Pose Inited") { Drivetrain.poseInited })
         bools.add(Pair("At Top") { Lift.atTop() })

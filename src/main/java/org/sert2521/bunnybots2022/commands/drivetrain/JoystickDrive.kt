@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase
 import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import org.sert2521.bunnybots2022.Input
 import org.sert2521.bunnybots2022.constants
+import org.sert2521.bunnybots2022.subsystems.Lift
 import java.lang.System.currentTimeMillis
 import kotlin.math.abs
 import kotlin.math.pow
@@ -27,8 +28,9 @@ class JoystickDrive(private val fieldOrientated: Boolean) : CommandBase() {
     }
 
     override fun execute() {
-        var currX = Input.getX() * constants.driveSpeed
-        var currY = Input.getY() * constants.driveSpeed
+        val height = Lift.getHeight()
+        var currX = (Input.getX() - (constants.maxLiftSlow * height / constants.liftEncoderMax)) * constants.driveSpeed
+        var currY = (Input.getY() - (constants.maxLiftSlow * height / constants.liftEncoderMax)) * constants.driveSpeed
 
         if (currX.pow(2) + currY.pow(2) <= constants.joystickDeadband * constants.joystickDeadband) {
             currX = 0.0
