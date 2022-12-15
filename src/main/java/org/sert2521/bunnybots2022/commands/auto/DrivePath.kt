@@ -19,6 +19,9 @@ class DrivePath(private val trajectory: Trajectory, private val angle: Rotation2
     init {
         addRequirements(Drivetrain)
 
+        // Null pointer exception?
+        //setController()
+
         registerReload()
     }
 
@@ -33,7 +36,6 @@ class DrivePath(private val trajectory: Trajectory, private val angle: Rotation2
 
     override fun initialize() {
         startTime = Timer.getFPGATimestamp()
-        setController()
     }
 
     override fun execute() {

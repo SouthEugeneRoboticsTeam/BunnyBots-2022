@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.sert2521.bunnybots2022.Reloadable
+import org.sert2521.bunnybots2022.commands.outtake.IndexOuttake
 import org.sert2521.bunnybots2022.constants
 
 // This behaviour (using periodic to control motors) is not consistent with other subsystems
@@ -29,6 +30,8 @@ object Outtake : SubsystemBase(), Reloadable {
         indexingMotor.inverted = true
 
         setPID()
+
+        defaultCommand = IndexOuttake()
     }
 
     private fun setPID() {

@@ -18,10 +18,7 @@ object Lift : SubsystemBase() {
     }
 
     override fun periodic() {
-        if (atTop()) {
-            motor.encoder.position = constants.liftEncoderMax
-            unset = false
-
+        if (!unset && getHeight() >= constants.liftTopHeight) {
             if (motor.get() > 0) {
                 motor.stopMotor()
             }

@@ -37,16 +37,16 @@ object TunableConstants {
     val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 0.5)
     val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 0.5)
 
-    val liftP = TunableNumber("Lift P", 0.0)//0.08)
+    val liftP = TunableNumber("Lift P", 6.0)
     val liftI = TunableNumber("Lift I", 0.0)
     val liftD = TunableNumber("Lift D", 0.0)
     val liftG = TunableNumber("Lift G", 0.0)
     val liftTolerance = TunableNumber("Lift Tolerance", 0.0)
 
-    val outtakeP = TunableNumber("Outtake P", 0.0)
+    val outtakeP = TunableNumber("Outtake P", 0.01)
     val outtakeI = TunableNumber("Outtake I", 0.0)
     val outtakeD = TunableNumber("Outtake D", 0.0)
-    val outtakeF = TunableNumber("Outtake F", 0.0)
+    val outtakeF = TunableNumber("Outtake F", 0.01)
 }
 
 // Maybe separate into true constants and tunable constants to make clear what needs to be reloaded
@@ -107,7 +107,7 @@ class Constants {
     val driveSpeed = 1.0
     val rotSpeed = 2.0
 
-    val joystickChangeSpeed = 0.1
+    val joystickChangeSpeed = 0.4
 
     val rumbleFactor = 0.2
 
@@ -131,14 +131,14 @@ class Constants {
 
     val tuning = false
 
-    val liftEncoderMax = 0.37 * 2.54
-    val liftEncoderRatio = liftEncoderMax * 0.76847106218338
+    val liftEncoderMax = 0.84
+    val liftEncoderRatio = liftEncoderMax / 0.789219796657562
 
-    val liftCalibrateSpeed = -0.1
+    val liftCalibrateSpeed = -0.25
 
     val liftBottomHeight = 0.0
     val liftMiddleHeight = 0.12
-    val liftTopHeight = 0.35
+    val liftTopHeight = 0.83
 
     val intakeMotor = 4
     val intakeSolenoid = Pair(7, 1)
@@ -149,19 +149,19 @@ class Constants {
     val outtakeAtBottomPin = 9
 
     val outtakeFlapSpeed = 0.3
-    val outtakeConversionFactor = (24 - 7) / (111288.6962890625 - 111698.681640625)
-    val outtakeDefaultSpeed = 0.7
-    val outtakeExhaleSpeed = 0.8
+    val outtakeConversionFactor = (0.24 - 0.07) / (1112.886962890625 - 1116.98681640625)
+    val outtakeDefaultSpeed = 40.0
+    val outtakeExhaleSpeed = 80.0
     val outtakeOneDistance = 0.0
 
     val indexerMotorID = 13
-    val indexerSpeed = 0.5
+    val indexerSpeed = 0.0//.8
 
     val liftMotorID = 9
     val liftUpSwitchID = 7
     val liftDownSwitchID = 6
 
-    val intakeSpeed = 0.7
+    val intakeSpeed = 0.0//7
 }
 
 var constants = Constants()

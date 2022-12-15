@@ -9,6 +9,7 @@ import org.sert2521.bunnybots2022.subsystems.Lift
 import java.lang.System.currentTimeMillis
 import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.math.sign
 import kotlin.math.sqrt
 
 class JoystickDrive(private val fieldOrientated: Boolean) : CommandBase() {
@@ -29,8 +30,24 @@ class JoystickDrive(private val fieldOrientated: Boolean) : CommandBase() {
 
     override fun execute() {
         val height = Lift.getHeight()
-        var currX = (Input.getX() - (constants.maxLiftSlow * height / constants.liftEncoderMax)) * constants.driveSpeed
-        var currY = (Input.getY() - (constants.maxLiftSlow * height / constants.liftEncoderMax)) * constants.driveSpeed
+
+        val maxX = 1 - (constants.maxLiftSlow * height / constants.liftEncoderMax)
+        val maxY = 1 - (constants.maxLiftSlow * height / constants.liftEncoderMax)
+
+        val inX = Input.getX()
+        val inY = Input.getY()
+
+        // Should limit speed not percent of controller
+        var currX = if (abs(inX) < maxX) {
+            inX * constants.driveSpeed
+        } else {
+            maxX * sign(inX) * constants.driveSpeed
+        }
+        var currY = if (abs(inY) < maxY) {
+            inY * constants.driveSpeed
+        } else {
+            maxX * sign(inY) * constants.driveSpeed
+        }
 
         if (currX.pow(2) + currY.pow(2) <= constants.joystickDeadband * constants.joystickDeadband) {
             currX = 0.0
