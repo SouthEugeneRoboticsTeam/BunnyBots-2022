@@ -5,25 +5,30 @@ import com.revrobotics.CANSparkMaxLowLevel
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.sert2521.bunnybots2022.constants
+import kotlin.math.max
+import kotlin.math.min
 
 object Lift : SubsystemBase() {
     private val motor = CANSparkMax(constants.liftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
     private val liftUpLimitSwitch = DigitalInput(constants.liftUpSwitchID)
     private val liftDownLimitSwitch = DigitalInput(constants.liftDownSwitchID)
     var unset = true
-        private set
 
     init {
         motor.idleMode = CANSparkMax.IdleMode.kBrake
     }
 
     override fun periodic() {
-        if (!unset && getHeight() >= constants.liftTopHeight) {
+        if (atTop()) {
+            motor.encoder.position = constants.liftEncoderMax / constants.liftEncoderRatio
+            unset = false
+
             if (motor.get() > 0) {
                 motor.stopMotor()
             }
         } else if (atBottom()) {
-            motor.encoder.position = constants.liftBottomHeight
+            motor.encoder.position = 0.0
+
             unset = false
 
             if (motor.get() < 0) {
@@ -41,19 +46,16 @@ object Lift : SubsystemBase() {
             return constants.liftEncoderMax
         }
 
+        // So it definitely gets to bottom
         return motor.encoder.position * constants.liftEncoderRatio
-    }
-
-    fun setHeight(place: Double) {
-        motor.encoder.position = place / constants.liftEncoderRatio
     }
 
     fun setMotor(speed: Double) {
         if (unset) {
             return
-        } else if((getHeight() >= constants.liftEncoderMax) && (speed > 0.0)) {
+        } else if(atTop() && (speed > 0.0)) {
             return
-        }else if((getHeight() <= 0.0) && (speed < 0.0)) {
+        }else if(atBottom() && (speed < 0.0)) {
             return
         }
 

@@ -8,14 +8,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.InstantCommand
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup
 import edu.wpi.first.wpilibj2.command.button.JoystickButton
+import org.sert2521.bunnybots2022.commands.OuttakeFront
 import org.sert2521.bunnybots2022.commands.intake.IntakeCommand
 import org.sert2521.bunnybots2022.commands.lift.LiftSetHeight
-import org.sert2521.bunnybots2022.commands.outtake.HoldOpenOuttake
-import org.sert2521.bunnybots2022.commands.outtake.IndexOuttake
 import org.sert2521.bunnybots2022.commands.outtake.OuttakeTubes
 import org.sert2521.bunnybots2022.subsystems.Drivetrain
+import org.sert2521.bunnybots2022.subsystems.Lift
 
 object Input {
     private val driverController = XboxController(0)
@@ -28,15 +27,14 @@ object Input {
 
     private val buttonReset = JoystickButton(driverController, 2)
 
-    private val buttonIntake = JoystickButton(gunnerController, 13)
+    private val buttonIntake = JoystickButton(driverController, 6)
+    private val outtakeFront = JoystickButton(driverController, 5)
 
     private val liftBottom = JoystickButton(gunnerController, 12)
-    private val liftMiddle = JoystickButton(gunnerController, 11)
+    private val recalibLift = JoystickButton(gunnerController, 11)
     private val liftTop = JoystickButton(gunnerController, 10)
 
     private val outtake = JoystickButton(gunnerController, 9)
-
-    private var liftUp = false
 
     init {
         autoChooser.setDefaultOption("Nothing", null)
@@ -49,15 +47,21 @@ object Input {
 
         liftBottom.whenPressed(LiftSetHeight(constants.liftBottomHeight, false))
 
-        liftMiddle.whenPressed(LiftSetHeight(constants.liftMiddleHeight, false))
+        recalibLift.whenPressed(InstantCommand({ Lift.unset = true }))
 
         liftTop.whenPressed(LiftSetHeight(constants.liftTopHeight, false))
 
         outtake.whenHeld(OuttakeTubes(null))
+
+        outtakeFront.whenHeld(OuttakeFront())
     }
 
     fun update() {
         // Remove
+        if (driverController.bButton) {
+            Drivetrain.setNewPose(Pose2d())
+        }
+
         prevNext = currNext
         currNext = driverController.aButton
     }

@@ -12,7 +12,7 @@ class RunIndexer : CommandBase(){
 
     override fun execute() {
         if (Lift.atBottom()) {
-            Indexer.setIndexerSpeed(constants.indexerSpeed)
+            Indexer.speedSetpoint = constants.indexerSpeed
         } else {
             Indexer.stop()
         }

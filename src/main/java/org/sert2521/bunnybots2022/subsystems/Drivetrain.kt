@@ -226,6 +226,12 @@ object Drivetrain : SubsystemBase(), Reloadable {
         }
     }
 
+    fun setNewPose(newPose: Pose2d) {
+        pose = newPose
+        odometry.resetPosition(pose, imu.rotation2d)
+        poseEstimator.resetPosition(pose, imu.rotation2d)
+    }
+
     fun getAccelSqr(): Double {
         return (imu.worldLinearAccelY.pow(2) + imu.worldLinearAccelX.pow(2)).toDouble()
     }

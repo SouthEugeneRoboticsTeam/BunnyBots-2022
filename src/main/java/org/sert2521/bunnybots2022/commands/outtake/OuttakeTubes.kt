@@ -28,7 +28,7 @@ class OuttakeTubes(private val amount: Int?) : CommandBase() {
 
     override fun isFinished(): Boolean {
         return if (amount != null) {
-            startPlace + amount * constants.outtakeOneDistance > Outtake.getSpinAmount()
+            startPlace + amount * constants.outtakeOneDistance <= Outtake.getSpinAmount()
         } else {
             false
         }
