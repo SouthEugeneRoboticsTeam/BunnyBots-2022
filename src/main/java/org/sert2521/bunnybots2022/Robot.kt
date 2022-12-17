@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
+import edu.wpi.first.wpilibj2.command.InstantCommand
+import edu.wpi.first.wpilibj2.command.WaitCommand
 import org.sert2521.bunnybots2022.commands.auto.DriveDynamic
 import org.sert2521.bunnybots2022.commands.auto.DrivePath
 import org.sert2521.bunnybots2022.commands.auto.FillRow
@@ -25,9 +27,8 @@ object Robot : TimedRobot() {
     private val commandScheduler = CommandScheduler.getInstance()
 
     //private val driveDynamic = DriveDynamic(Pose2d(0.0, -1.0, Rotation2d(0.0)))
-    // 2.6
     private val fillRow = DrivePath(Pose2d(0.0, 0.0, Rotation2d(PI / 2)),
-        Pose2d(0.0, (284 / 39.94) - (constants.halfSideLength * 2.6),
+        Pose2d(0.0, (284 / 39.94) - (constants.halfSideLength * 3.6),
             Rotation2d(PI / 2)),
         constants.trajectoryConfigFast, Rotation2d(0.0)).andThen(FillRow())
     private val joystickDrive = JoystickDrive(true)
@@ -55,6 +56,10 @@ object Robot : TimedRobot() {
         joystickDrive.schedule()
     }
 
+    override fun teleopExit() {
+        //Drivetrain.setMode(false)
+    }
+
     override fun autonomousInit() {
         currAuto = Input.getAuto()
         Drivetrain.setNewPose(Pose2d())
@@ -62,15 +67,20 @@ object Robot : TimedRobot() {
     }
 
     override fun testInit() {
-        runTests.schedule()
+        //runTests.schedule()
     }
 
     override fun testExit() {
-        runTests.cancel()
+        //runTests.cancel()
     }
 
     override fun disabledInit() {
         commandScheduler.cancelAll()
         Input.setRumble(0.0)
+        //WaitCommand(1.5).andThen(InstantCommand({ Drivetrain.setMode(true) })).schedule()
+    }
+
+    override fun disabledExit() {
+        Drivetrain.setMode(false)
     }
 }

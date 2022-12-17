@@ -60,10 +60,10 @@ class Constants {
     // (diagonal length / 4) * sqrt of 2
     val halfSideLength = (0.885 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI)),
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.36 - (PI)),
         SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76))
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.82),
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.86))
 
     val swervePowerS = TunableConstants.swervePowerS.value
     val swervePowerV = TunableConstants.swervePowerV.value
@@ -132,7 +132,7 @@ class Constants {
     val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
     val trajectoryConfig = TrajectoryConfig(1.0, 1.5)
-    val trajectoryConfigFast = TrajectoryConfig(1.5, 1.5)
+    val trajectoryConfigFast = TrajectoryConfig(1.75, 2.5)
     val startFillPose = Translation2d(0.0, -1.0)
     val touchingFillPose = Translation2d(0.0, -halfSideLength)
 
@@ -167,7 +167,8 @@ class Constants {
     // No idea what units 40 and 80 are in
     val outtakeDefaultSpeed = 40.0
     val outtakeExhaleSpeed = 40.0
-    val outtakeOneDistance = 0.24
+    val outtakeHoldSpeed = 10.0
+    val outtakeOneDistance = 0.18
 
     val indexerMotorID = 13
     // No idea what this is in either

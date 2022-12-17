@@ -34,7 +34,7 @@ class FillRow : SequentialCommandGroup() {
             InstantCommand({ Drivetrain.setNewPose(Pose2d(0.0, -constants.halfSideLength * 1.5, Rotation2d(0.0))) }),
             toTouching1.deadlineWith(LiftSetHeight(constants.liftBottomHeight, false), HoldOpenOuttake()),
             OuttakeTubes(1).deadlineWith(LiftSetHeight(constants.liftBottomHeight, false)),
-            fromTouching.deadlineWith(LiftSetHeight(constants.liftTopHeight, false), HoldOpenOuttake()),
+            fromTouching.deadlineWith(LiftSetHeight(constants.liftTopHeight, false), OuttakeTubes(1).andThen(HoldOpenOuttake())),
             LiftSetHeight(constants.liftTopHeight, true).deadlineWith(HoldOpenOuttake()),
             toTouching2.deadlineWith(LiftSetHeight(constants.liftTopHeight, false), HoldOpenOuttake()),
             OuttakeTubes(null).deadlineWith(LiftSetHeight(constants.liftTopHeight, false)),
