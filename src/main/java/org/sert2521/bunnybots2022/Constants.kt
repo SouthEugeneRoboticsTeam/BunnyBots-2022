@@ -112,10 +112,10 @@ class Constants {
     val angleEncoderMultiplier = 0.01745329251
 
     val powerDeadband = 0.05
-    val rotDeadband = 0.01
-    val joystickDeadband = 0.01
+    val rotDeadband = 0.05
+    val joystickDeadband = 0.05
 
-    val driveSpeed = 1.0
+    val driveSpeed = 1.2
     val rotSpeed = 2.0
 
     val joystickChangeSpeed = 0.4
@@ -137,7 +137,7 @@ class Constants {
     val touchingFillPose = Translation2d(0.0, -halfSideLength)
 
     val drivetrainOptimized = true
-    val maxLiftSlow = 0.75
+    val maxLiftSlow = 0.30
 
     val tuning = false
 

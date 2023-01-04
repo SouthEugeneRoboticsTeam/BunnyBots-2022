@@ -16,6 +16,7 @@ import org.sert2521.bunnybots2022.commands.drivetrain.JoystickDrive
 import org.sert2521.bunnybots2022.commands.drivetrain.test.RunTests
 import org.sert2521.bunnybots2022.commands.indexer.RunIndexer
 import org.sert2521.bunnybots2022.commands.lift.LiftSetHeight
+import org.sert2521.bunnybots2022.commands.outtake.HoldOpenOuttake
 import org.sert2521.bunnybots2022.commands.outtake.IndexOuttake
 import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import org.sert2521.bunnybots2022.subsystems.Indexer
@@ -27,10 +28,10 @@ object Robot : TimedRobot() {
     private val commandScheduler = CommandScheduler.getInstance()
 
     //private val driveDynamic = DriveDynamic(Pose2d(0.0, -1.0, Rotation2d(0.0)))
-    private val fillRow = DrivePath(Pose2d(0.0, 0.0, Rotation2d(PI / 2)),
+    /*private val fillRow = DrivePath(Pose2d(0.0, 0.0, Rotation2d(PI / 2)),
         Pose2d(0.0, (284 / 39.94) - (constants.halfSideLength * 3.6),
             Rotation2d(PI / 2)),
-        constants.trajectoryConfigFast, Rotation2d(0.0)).andThen(FillRow())
+        constants.trajectoryConfigFast, Rotation2d(0.0)).andThen(FillRow())*/
     private val joystickDrive = JoystickDrive(true)
     private val runTests = RunTests()
 
@@ -61,9 +62,10 @@ object Robot : TimedRobot() {
     }
 
     override fun autonomousInit() {
-        currAuto = Input.getAuto()
+        //currAuto = Input.getAuto()
         Drivetrain.setNewPose(Pose2d())
-        fillRow.schedule()
+        Input.getAuto()?.schedule()
+        //fillRow.schedule()
     }
 
     override fun testInit() {
