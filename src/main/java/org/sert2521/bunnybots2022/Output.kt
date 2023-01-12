@@ -1,10 +1,13 @@
 package org.sert2521.bunnybots2022
 
+import edu.wpi.first.wpilibj.DataLogManager
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.smartdashboard.Field2d
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import org.sert2521.bunnybots2022.subsystems.Drivetrain
 import org.sert2521.bunnybots2022.subsystems.Lift
 import org.sert2521.bunnybots2022.subsystems.Outtake
+import java.io.File
 
 object Output {
     private val field = Field2d()
@@ -12,6 +15,15 @@ object Output {
     private val bools = mutableListOf<Pair<String, () -> Boolean>>()
 
     init {
+        val storageDevices = File("/media").listFiles()!!
+        for (storageDevice in storageDevices) {
+            if (storageDevice.name != "sda") {
+                DataLogManager.start(storageDevice.absolutePath)
+                DriverStation.startDataLog(DataLogManager.getLog())
+                break
+            }
+        }
+
         values.add(Pair("Acceleration") { Drivetrain.getAccelSqr() })
         values.add(Pair("Lift Height") { Lift.getHeight() } )
         values.add(Pair("Outtake Spin") { Outtake.getSpinAmount() } )
