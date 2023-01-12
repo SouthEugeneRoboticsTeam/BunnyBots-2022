@@ -14,8 +14,9 @@ import kotlin.math.PI
 data class SwerveModuleData(val position: Translation2d, val powerMotorID: Int, val angleMotorID: Int, val angleEncoderID: Int, val angleOffset: Double)
 
 object TunableConstants {
-    val swervePowerS = TunableNumber("Swerve Power S", 0.60983)
-    val swervePowerV = TunableNumber("Swerve Power V", 2.601311978)
+    // Re run sysid
+    val swervePowerS = TunableNumber("Swerve Power S", 1.20983)
+    val swervePowerV = TunableNumber("Swerve Power V", 4.601311978)
     val swervePowerA = TunableNumber("Swerve Power A", 0.159883071)
 
     val swervePowerP = TunableNumber("Swerve Power P", 2.730003958)
@@ -26,38 +27,43 @@ object TunableConstants {
     val swerveAngleI = TunableNumber("Swerve Angle I", 0.0)
     val swerveAngleD = TunableNumber("Swerve Angle D", 0.0)
 
-    val autoForwardP = TunableNumber("Auto Forward P", 0.0)
+    val autoForwardP = TunableNumber("Auto Forward P", 0.8)
     val autoForwardI = TunableNumber("Auto Forward I", 0.0)
     val autoForwardD = TunableNumber("Auto Forward D", 0.0)
 
-    val autoAngleP = TunableNumber("Auto Angle P", 0.5)
+    val autoAngleP = TunableNumber("Auto Angle P", -0.5)
     val autoAngleI = TunableNumber("Auto Angle I", 0.0)
     val autoAngleD = TunableNumber("Auto Angle D", 0.0)
 
-    val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 0.5)
-    val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 0.5)
+    val autoAngleMaxVel = TunableNumber("Auto Angle Max Vel", 1.0)
+    val autoAngleMaxAcc = TunableNumber("Auto Angle Max Acc", 2.0)
 
-    val liftP = TunableNumber("Lift P", 0.0)//0.08)
-    val liftI = TunableNumber("Lift I", 0.0)
+    val liftP = TunableNumber("Lift P", 6.0)
+    val liftI = TunableNumber("Lift I", 0.1)
     val liftD = TunableNumber("Lift D", 0.0)
     val liftG = TunableNumber("Lift G", 0.0)
     val liftTolerance = TunableNumber("Lift Tolerance", 0.0)
 
-    val outtakeP = TunableNumber("Outtake P", 0.0)
-    val outtakeI = TunableNumber("Outtake I", 0.0)
+    val indexerP = TunableNumber("Indexer P", 0.00025)
+    val indexerI = TunableNumber("Indexer I", 0.00001)
+    val indexerD = TunableNumber("Indexer D", 0.0)
+    val indexerF = TunableNumber("Indexer F", 0.00025)
+
+    val outtakeP = TunableNumber("Outtake P", 0.0075)
+    val outtakeI = TunableNumber("Outtake I", 0.0005)
     val outtakeD = TunableNumber("Outtake D", 0.0)
-    val outtakeF = TunableNumber("Outtake F", 0.0)
+    val outtakeF = TunableNumber("Outtake F", 0.0125)
 }
 
 // Maybe separate into true constants and tunable constants to make clear what needs to be reloaded
 class Constants {
     // (diagonal length / 4) * sqrt of 2
-    private val halfSideLength = (0.885 / 4) * 1.41421356237
+    val halfSideLength = (0.885 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.26 - (PI)),
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.36 - (PI)),
         SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.77),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.76))
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.82),
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.86))
 
     val swervePowerS = TunableConstants.swervePowerS.value
     val swervePowerV = TunableConstants.swervePowerV.value
@@ -88,6 +94,11 @@ class Constants {
     val liftG = TunableConstants.liftG.value
     val liftTolerance = TunableConstants.liftTolerance.value
 
+    val indexerP = TunableConstants.indexerP.value
+    val indexerI = TunableConstants.indexerI.value
+    val indexerD = TunableConstants.indexerD.value
+    val indexerF = TunableConstants.indexerF.value
+
     val outtakeP = TunableConstants.outtakeP.value
     val outtakeI = TunableConstants.outtakeI.value
     val outtakeD = TunableConstants.outtakeD.value
@@ -101,15 +112,15 @@ class Constants {
     val angleEncoderMultiplier = 0.01745329251
 
     val powerDeadband = 0.05
-    val rotDeadband = 0.1
-    val joystickDeadband = 0.1
+    val rotDeadband = 0.05
+    val joystickDeadband = 0.05
 
-    val driveSpeed = 1.0
+    val driveSpeed = 1.2
     val rotSpeed = 2.0
 
-    val joystickChangeSpeed = 0.1
+    val joystickChangeSpeed = 0.4
 
-    val rumbleFactor = 0.2
+    val rumbleFactor = 0.4
 
     val targetTimeout = 0.7
     val tagPose = Pose3d(1.0, 0.0, 0.0, Rotation3d(0.0, 0.0, 0.0))
@@ -120,25 +131,28 @@ class Constants {
     val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.05)
     val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
-    val trajectoryConfig = TrajectoryConfig(0.5, 0.5)
-    private val startFillPose = Pose2d(-1.0, 0.0, Rotation2d(0.0))
-    private val touchingFillPose = Pose2d(-halfSideLength / 0.9, 0.0, Rotation2d(0.0))
-    val toTouching = DrivePath(TrajectoryGenerator.generateTrajectory(startFillPose, mutableListOf(), touchingFillPose, trajectoryConfig), Rotation2d(0.0))
-    val fromTouching = DrivePath(TrajectoryGenerator.generateTrajectory(touchingFillPose, mutableListOf(), startFillPose, trajectoryConfig), Rotation2d(0.0))
+    val trajectoryConfig = TrajectoryConfig(1.0, 1.5)
+    val trajectoryConfigFast = TrajectoryConfig(1.75, 2.5)
+    val startFillPose = Translation2d(0.0, -1.0)
+    val touchingFillPose = Translation2d(0.0, -halfSideLength)
 
     val drivetrainOptimized = true
-    val maxLiftSlow = 0.75
+    val maxLiftSlow = 0.30
 
     val tuning = false
 
-    val liftEncoderMax = 0.37 * 2.54
-    val liftEncoderRatio = liftEncoderMax * 0.76847106218338
+    val liftEncoderMax = 0.78
+    val liftEncoderRatio = liftEncoderMax / 0.789219796657562
 
-    val liftCalibrateSpeed = -0.1
+    val liftCalibrateSpeed = -0.5
 
-    val liftBottomHeight = 0.0
-    val liftMiddleHeight = 0.12
-    val liftTopHeight = 0.35
+    // Bottom a little lower, so it definitely hits the limit switch
+    val liftBottomHeight = -0.025
+    val liftTopHeight = 0.77
+
+    val liftMotorID = 9
+    val liftUpSwitchID = 7
+    val liftDownSwitchID = 6
 
     val intakeMotor = 4
     val intakeSolenoid = Pair(7, 1)
@@ -149,17 +163,16 @@ class Constants {
     val outtakeAtBottomPin = 9
 
     val outtakeFlapSpeed = 0.3
-    val outtakeConversionFactor = (24 - 7) / (111288.6962890625 - 111698.681640625)
-    val outtakeDefaultSpeed = 0.7
-    val outtakeExhaleSpeed = 0.8
-    val outtakeOneDistance = 0.0
+    val outtakeConversionFactor = (0.24 - 0.07) / (1112.886962890625 - 1116.98681640625)
+    // No idea what units 40 and 80 are in
+    val outtakeDefaultSpeed = 40.0
+    val outtakeExhaleSpeed = 40.0
+    val outtakeHoldSpeed = 10.0
+    val outtakeOneDistance = 0.18
 
     val indexerMotorID = 13
-    val indexerSpeed = 0.5
-
-    val liftMotorID = 9
-    val liftUpSwitchID = 7
-    val liftDownSwitchID = 6
+    // No idea what this is in either
+    val indexerSpeed = 2000.0
 
     val intakeSpeed = 0.7
 }

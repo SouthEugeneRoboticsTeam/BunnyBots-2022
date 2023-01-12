@@ -92,6 +92,16 @@ class SwerveModule(val powerMotor: TalonFX,
         set(SwerveModuleState(0.0, centerRotation))
     }
 
+    fun setMotorMode(coast: Boolean) {
+        if (coast) {
+            powerMotor.setNeutralMode(NeutralMode.Coast)
+            angleMotor.idleMode = CANSparkMax.IdleMode.kCoast
+        } else {
+            powerMotor.setNeutralMode(NeutralMode.Brake)
+            angleMotor.idleMode = CANSparkMax.IdleMode.kBrake
+        }
+    }
+
     override fun stopMotor() {
         powerMotor.set(ControlMode.PercentOutput, 0.0)
         angleMotor.stopMotor()
@@ -226,6 +236,12 @@ object Drivetrain : SubsystemBase(), Reloadable {
         }
     }
 
+    fun setNewPose(newPose: Pose2d) {
+        pose = newPose
+        odometry.resetPosition(pose, imu.rotation2d)
+        poseEstimator.resetPosition(pose, imu.rotation2d)
+    }
+
     fun getAccelSqr(): Double {
         return (imu.worldLinearAccelY.pow(2) + imu.worldLinearAccelX.pow(2)).toDouble()
     }
@@ -253,6 +269,12 @@ object Drivetrain : SubsystemBase(), Reloadable {
         }
 
         feed()
+    }
+
+    fun setMode(coast: Boolean) {
+        for (module in modules) {
+            module.setMotorMode(coast)
+        }
     }
 
     fun stop() {

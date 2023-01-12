@@ -15,20 +15,19 @@ class OuttakeTubes(private val amount: Int?) : CommandBase() {
         startPlace = Outtake.getSpinAmount()
 
         Outtake.openingFlap = true
-        Outtake.stop()
     }
 
     override fun execute() {
         if (Outtake.isOpen()) {
             Outtake.speedSetpoint = constants.outtakeExhaleSpeed
         } else {
-            Outtake.stop()
+            Outtake.speedSetpoint = constants.outtakeHoldSpeed
         }
     }
 
     override fun isFinished(): Boolean {
         return if (amount != null) {
-            startPlace + amount * constants.outtakeOneDistance > Outtake.getSpinAmount()
+            startPlace + amount * constants.outtakeOneDistance <= Outtake.getSpinAmount()
         } else {
             false
         }

@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.sert2521.bunnybots2022.Reloadable
+import org.sert2521.bunnybots2022.commands.outtake.IndexOuttake
 import org.sert2521.bunnybots2022.constants
 
 // This behaviour (using periodic to control motors) is not consistent with other subsystems
@@ -14,7 +15,7 @@ import org.sert2521.bunnybots2022.constants
 object Outtake : SubsystemBase(), Reloadable {
     private val flapMotor = CANSparkMax(constants.outtakeFlapMotorID, CANSparkMaxLowLevel.MotorType.kBrushed)
     private val indexingMotor = CANSparkMax(constants.outtakeIndexingMotorID, CANSparkMaxLowLevel.MotorType.kBrushed)
-    private val indexEncoder = indexingMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096)
+    private val indexerEncoder = indexingMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096)
 
     private lateinit var indexerPID: PIDController
 
@@ -29,6 +30,8 @@ object Outtake : SubsystemBase(), Reloadable {
         indexingMotor.inverted = true
 
         setPID()
+
+        defaultCommand = IndexOuttake()
     }
 
     private fun setPID() {
@@ -54,11 +57,11 @@ object Outtake : SubsystemBase(), Reloadable {
     }
 
     fun getSpinAmount(): Double {
-        return indexEncoder.position * constants.outtakeConversionFactor
+        return indexerEncoder.position * constants.outtakeConversionFactor
     }
 
     private fun getSpinSpeed(): Double {
-        return indexEncoder.velocity * constants.outtakeConversionFactor
+        return indexerEncoder.velocity * constants.outtakeConversionFactor
     }
 
     fun isOpen(): Boolean {
