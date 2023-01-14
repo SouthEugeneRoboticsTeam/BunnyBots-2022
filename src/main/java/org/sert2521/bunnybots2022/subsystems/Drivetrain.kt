@@ -130,12 +130,10 @@ object Drivetrain : SubsystemBase(), Reloadable {
     var prevLastUpdate: Double? = null
 
     var pose = Pose2d()
+
     var odometryPose = Pose2d()
         private set
         get() = odometry.poseMeters
-
-    var poseInited = false
-        private set
 
     // False is broken
     var doesOptimize = constants.drivetrainOptimized
@@ -210,19 +208,12 @@ object Drivetrain : SubsystemBase(), Reloadable {
             val measurement = Transform3d(translation, Rotation3d(MatBuilder(Nat.N3(), Nat.N3()).fill(*rotation)))
             val visionEstimate = constants.tagPose.transformBy(measurement.inverse()).transformBy(constants.cameraTrans).toPose2d()
 
-            if (poseInited) {
-                // Should make sure lastUpdate is synced with Timer.getFPGATimestamp()
-                poseEstimator.addVisionMeasurement(visionEstimate, Timer.getFPGATimestamp() + prevLastUpdate!! - lastUpdate)
-            } else {
-                poseEstimator.resetPosition(visionEstimate, imu.rotation2d)
-                // Equivalent to setting pose, but with latency in theory
-                //poseEstimator.addVisionMeasurement(visionEstimate, Timer.getFPGATimestamp(), constants.startGlobalDeviations)
-                //poseEstimator.setVisionMeasurementStdDevs(constants.globalDeviations)
-                poseInited = true
-            }
-
-            prevLastUpdate = lastUpdate
+            // Should make sure lastUpdate is synced with Timer.getFPGATimestamp()
+            poseEstimator.addVisionMeasurement(visionEstimate, Timer.getFPGATimestamp() + prevLastUpdate!! - lastUpdate)
+            //poseEstimator.resetPosition(visionEstimate, imu.rotation2d)
         }
+
+        prevLastUpdate = lastUpdate
 
         pose = poseEstimator.update(imu.rotation2d, *states.toTypedArray())
         odometry.update(imu.rotation2d, *states.toTypedArray())

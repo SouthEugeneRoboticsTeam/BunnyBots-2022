@@ -16,19 +16,15 @@ object Output {
 
     init {
         val storageDevices = File("/media").listFiles()!!
-        for (storageDevice in storageDevices) {
-            if (storageDevice.name != "sda") {
-                DataLogManager.start(storageDevice.absolutePath)
-                DriverStation.startDataLog(DataLogManager.getLog())
-                break
-            }
+        if (storageDevices.isNotEmpty()) {
+            DataLogManager.start(storageDevices[0].absolutePath)
+            DriverStation.startDataLog(DataLogManager.getLog())
         }
 
         values.add(Pair("Acceleration") { Drivetrain.getAccelSqr() })
         values.add(Pair("Lift Height") { Lift.getHeight() } )
         values.add(Pair("Outtake Spin") { Outtake.getSpinAmount() } )
 
-        bools.add(Pair("Pose Inited") { Drivetrain.poseInited })
         bools.add(Pair("At Top") { Lift.atTop() })
         bools.add(Pair("At Bottom") { Lift.atBottom() })
         bools.add(Pair("Outtake Open") { Outtake.isOpen() })

@@ -115,7 +115,7 @@ class Constants {
     val rotDeadband = 0.05
     val joystickDeadband = 0.05
 
-    val driveSpeed = 1.2
+    val driveSpeed = 1.0
     val rotSpeed = 2.0
 
     val joystickChangeSpeed = 0.4

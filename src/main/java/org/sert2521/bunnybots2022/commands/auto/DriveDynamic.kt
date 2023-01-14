@@ -51,10 +51,6 @@ class DriveDynamic(private val target: Pose2d) : CommandBase(), Reloadable {
     }
 
     override fun initialize() {
-        if (!Drivetrain.poseInited) {
-            throw Exception("Drivetrain must be have an inited pose")
-        }
-
         genTrajectory()
 
         startTime = Timer.getFPGATimestamp()
