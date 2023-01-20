@@ -14,10 +14,7 @@ import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.*
-import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry
-import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.math.kinematics.*
 import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.MotorSafety
 import edu.wpi.first.wpilibj.Timer
@@ -42,12 +39,20 @@ class SwerveModule(val powerMotor: TalonFX,
     var doesOptimize = shouldOptimize
         private set
 
+    var position: SwerveModulePosition
+
     init {
         if (doesOptimize) {
             anglePID.enableContinuousInput(-PI, PI)
         } else {
             anglePID.enableContinuousInput(-PI * 2, PI * 2)
         }
+
+        position = SwerveModulePosition(getDistance(), getAngle())
+    }
+
+    private fun getDistance(): Double {
+        return powerMotor.selectedSensorPosition * constants.powerEncoderMultiplier
     }
 
     private fun getVelocity(): Double {
@@ -158,9 +163,18 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
         modules = modulesList.toTypedArray()
 
+        val positions = mutableListOf<SwerveModulePosition>()
+
+        for (module in modules) {
+            module.updateState()
+            positions.add(module.position)
+        }
+
+        val positionsArray = positions.toTypedArray()
+
         kinematics = SwerveDriveKinematics(*modulePositions.toTypedArray())
-        poseEstimator = SwerveDrivePoseEstimator(imu.rotation2d, Pose2d(), kinematics, constants.stateDeviations, constants.localDeviations, constants.globalDeviations)
-        odometry = SwerveDriveOdometry(kinematics, imu.rotation2d)
+        poseEstimator = SwerveDrivePoseEstimator(kinematics, imu.rotation2d, positionsArray, Pose2d(), constants.stateDeviations, constants.globalDeviations)
+        odometry = SwerveDriveOdometry(kinematics, imu.rotation2d, positionsArray)
 
         registerReload()
     }
@@ -192,13 +206,6 @@ object Drivetrain : SubsystemBase(), Reloadable {
     }
 
     override fun periodic() {
-        val states = mutableListOf<SwerveModuleState>()
-
-        for (module in modules) {
-            module.updateState()
-            states.add(module.state)
-        }
-
         // Technically small chance the entries are not synced (maybe)
         val position = targetPoseEntry.getDoubleArray(DoubleArray(0))
         val rotation = targetAngleEntry.getDoubleArray(DoubleArray(0))
@@ -215,8 +222,17 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
         prevLastUpdate = lastUpdate
 
-        pose = poseEstimator.update(imu.rotation2d, *states.toTypedArray())
-        odometry.update(imu.rotation2d, *states.toTypedArray())
+        val positions = mutableListOf<SwerveModulePosition>()
+
+        for (module in modules) {
+            module.updateState()
+            positions.add(module.position)
+        }
+
+        val positionsArray = positions.toTypedArray()
+
+        pose = poseEstimator.update(imu.rotation2d, positionsArray)
+        odometry.update(imu.rotation2d, positionsArray)
     }
 
     fun setOptimize(value: Boolean) {
@@ -229,8 +245,18 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
     fun setNewPose(newPose: Pose2d) {
         pose = newPose
-        odometry.resetPosition(pose, imu.rotation2d)
-        poseEstimator.resetPosition(pose, imu.rotation2d)
+
+        val positions = mutableListOf<SwerveModulePosition>()
+
+        for (module in modules) {
+            module.updateState()
+            positions.add(module.position)
+        }
+
+        val positionsArray = positions.toTypedArray()
+
+        odometry.resetPosition(imu.rotation2d, positionsArray, pose)
+        poseEstimator.resetPosition(imu.rotation2d, positionsArray, pose)
     }
 
     fun getAccelSqr(): Double {
