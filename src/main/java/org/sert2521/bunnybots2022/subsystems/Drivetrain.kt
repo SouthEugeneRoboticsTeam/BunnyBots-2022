@@ -8,17 +8,15 @@ import com.ctre.phoenix.sensors.CANCoder
 import com.kauailabs.navx.frc.AHRS
 import com.revrobotics.CANSparkMax
 import com.revrobotics.CANSparkMaxLowLevel
-import edu.wpi.first.math.MatBuilder
-import edu.wpi.first.math.Nat
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.SimpleMotorFeedforward
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
 import edu.wpi.first.math.geometry.*
 import edu.wpi.first.math.kinematics.*
-import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.MotorSafety
-import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import org.photonvision.PhotonCamera
+import org.photonvision.targeting.PhotonPipelineResult
 import org.sert2521.bunnybots2022.Reloadable
 import org.sert2521.bunnybots2022.SwerveModuleData
 import org.sert2521.bunnybots2022.constants
@@ -52,11 +50,11 @@ class SwerveModule(val powerMotor: TalonFX,
     }
 
     private fun getDistance(): Double {
-        return powerMotor.selectedSensorPosition * constants.powerEncoderMultiplier
+        return powerMotor.selectedSensorPosition * constants.powerEncoderMultiplierPosition
     }
 
     private fun getVelocity(): Double {
-        return powerMotor.selectedSensorVelocity * constants.powerEncoderMultiplier
+        return powerMotor.selectedSensorVelocity * constants.powerEncoderMultiplierVelocity
     }
 
     private fun getAngle(): Rotation2d {
@@ -75,7 +73,9 @@ class SwerveModule(val powerMotor: TalonFX,
 
     // Should be called in periodic
     fun updateState() {
-        state = SwerveModuleState(getVelocity(), getAngle())
+        val angle = getAngle()
+        state = SwerveModuleState(getVelocity(), angle)
+        position = SwerveModulePosition(getDistance(), angle)
     }
 
     fun set(wanted: SwerveModuleState) {
@@ -120,19 +120,13 @@ class SwerveModule(val powerMotor: TalonFX,
 object Drivetrain : SubsystemBase(), Reloadable {
     private val imu = AHRS()
 
-    private val visionTable = NetworkTableInstance.getDefault().getTable("Vision")
-    private val isTargetEntry = visionTable.getEntry("Is Target")
-    // Last update is when the picture was taken
-    private val targetLastUpdate = visionTable.getEntry("Last Update")
-    private val targetPoseEntry = visionTable.getEntry("Position")
-    private val targetAngleEntry = visionTable.getEntry("Rotation")
+    private val cam = PhotonCamera(constants.camName)
+    private var prevRes: PhotonPipelineResult? = null
 
     private val kinematics: SwerveDriveKinematics
     private var modules: Array<SwerveModule>
     private val odometry: SwerveDriveOdometry
     private val poseEstimator: SwerveDrivePoseEstimator
-
-    var prevLastUpdate: Double? = null
 
     var pose = Pose2d()
 
@@ -206,21 +200,16 @@ object Drivetrain : SubsystemBase(), Reloadable {
     }
 
     override fun periodic() {
-        // Technically small chance the entries are not synced (maybe)
-        val position = targetPoseEntry.getDoubleArray(DoubleArray(0))
-        val rotation = targetAngleEntry.getDoubleArray(DoubleArray(0))
-        val lastUpdate = targetLastUpdate.getNumber(0) as Double
-        if (isTargetEntry.getBoolean(false) && prevLastUpdate != null && lastUpdate != prevLastUpdate) {
-            val translation = Translation3d(position[2], position[0], position[1])
-            val measurement = Transform3d(translation, Rotation3d(MatBuilder(Nat.N3(), Nat.N3()).fill(*rotation)))
-            val visionEstimate = constants.tagPose.transformBy(measurement.inverse()).transformBy(constants.cameraTrans).toPose2d()
+        val res = cam.latestResult
+        if (res != prevRes) {
+            if (res.hasTargets()) {
+                val camToTargetTrans = res.bestTarget.bestCameraToTarget
+                val camPose = constants.tagPose.transformBy(camToTargetTrans.inverse())
+                poseEstimator.addVisionMeasurement(camPose.transformBy(constants.cameraTrans).toPose2d(), res.timestampSeconds)
+            }
 
-            // Should make sure lastUpdate is synced with Timer.getFPGATimestamp()
-            poseEstimator.addVisionMeasurement(visionEstimate, Timer.getFPGATimestamp() + prevLastUpdate!! - lastUpdate)
-            //poseEstimator.resetPosition(visionEstimate, imu.rotation2d)
+            prevRes = res
         }
-
-        prevLastUpdate = lastUpdate
 
         val positions = mutableListOf<SwerveModulePosition>()
 

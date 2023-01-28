@@ -10,14 +10,14 @@ import org.sert2521.bunnybots2022.commands.indexer.RunIndexer
 import org.sert2521.bunnybots2022.constants
 
 object Indexer : SubsystemBase(), Reloadable {
-    private val indexer = CANSparkMax(constants.indexerMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    //private val indexer = CANSparkMax(constants.indexerMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
     private lateinit var indexerPID: PIDController
 
     var speedSetpoint = 0.0
 
     init {
-        indexer.inverted = true
+        //indexer.inverted = true
 
         setPID()
 
@@ -29,7 +29,7 @@ object Indexer : SubsystemBase(), Reloadable {
     }
 
     override fun periodic() {
-        indexer.set(indexerPID.calculate(indexer.encoder.velocity, speedSetpoint) + speedSetpoint * constants.indexerF)
+        //indexer.set(indexerPID.calculate(indexer.encoder.velocity, speedSetpoint) + speedSetpoint * constants.indexerF)
     }
 
     fun stop() {

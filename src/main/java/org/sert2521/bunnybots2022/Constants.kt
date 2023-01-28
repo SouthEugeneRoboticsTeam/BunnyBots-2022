@@ -106,7 +106,8 @@ class Constants {
 
     // Figure out the divide by 10
     // PI * diameter / (gear ratio * counts per rev)
-    val powerEncoderMultiplier = (PI * 0.1016 / (8.14 * 2048 / 10))
+    val powerEncoderMultiplierPosition = (PI * 0.1016 / (8.14 * 2048))
+    val powerEncoderMultiplierVelocity = (PI * 0.1016 / (8.14 * 2048 / 10))
 
     // Degrees to radians
     val angleEncoderMultiplier = 0.01745329251
@@ -115,20 +116,21 @@ class Constants {
     val rotDeadband = 0.05
     val joystickDeadband = 0.05
 
-    val driveSpeed = 1.0
-    val rotSpeed = 2.0
+    val driveSpeed = 2.5
+    val rotSpeed = 3.5
 
     val joystickChangeSpeed = 0.4
 
     val rumbleFactor = 0.4
 
+    val camName = "Apriltag"
     val targetTimeout = 0.7
-    val tagPose = Pose3d(1.0, 0.0, 0.0, Rotation3d(0.0, 0.0, 0.0))
+    val tagPose = Pose3d(1.0, 0.0, 0.0, Rotation3d(0.0, PI, 0.0))
     val cameraTrans = Transform3d(Translation3d(halfSideLength, 0.0, 0.0), Rotation3d(0.0, 0.0, 0.0))
 
-    val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.05, 0.05, 0.01)
+    val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.0025)
     val localDeviations: Matrix<N1, N1> = MatBuilder(Nat.N1(), Nat.N1()).fill(0.02)
-    val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.05)
+    val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(2.5, 2.5, 2.5)
     val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
     val trajectoryConfig = TrajectoryConfig(1.0, 1.5)

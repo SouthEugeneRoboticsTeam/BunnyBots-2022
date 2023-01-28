@@ -9,35 +9,35 @@ import kotlin.math.max
 import kotlin.math.min
 
 object Lift : SubsystemBase() {
-    private val motor = CANSparkMax(constants.liftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    //private val motor = CANSparkMax(constants.liftMotorID, CANSparkMaxLowLevel.MotorType.kBrushless)
     private val liftUpLimitSwitch = DigitalInput(constants.liftUpSwitchID)
     private val liftDownLimitSwitch = DigitalInput(constants.liftDownSwitchID)
     var unset = true
 
     init {
-        motor.idleMode = CANSparkMax.IdleMode.kBrake
+        //motor.idleMode = CANSparkMax.IdleMode.kBrake
     }
 
     override fun periodic() {
         if (atTop()) {
-            motor.encoder.position = constants.liftEncoderMax / constants.liftEncoderRatio
+            //motor.encoder.position = constants.liftEncoderMax / constants.liftEncoderRatio
             unset = false
 
-            if (motor.get() > 0) {
-                motor.stopMotor()
-            }
+            //if (motor.get() > 0) {
+                //motor.stopMotor()
+            //}
         } else if (atBottom()) {
-            motor.encoder.position = 0.0
+            //motor.encoder.position = 0.0
 
             unset = false
 
-            if (motor.get() < 0) {
-                motor.stopMotor()
-            }
+            //if (motor.get() < 0) {
+                //motor.stopMotor()
+            //}
         }
 
         if (unset) {
-            motor.set(constants.liftCalibrateSpeed)
+            //motor.set(constants.liftCalibrateSpeed)
         }
     }
 
@@ -47,7 +47,7 @@ object Lift : SubsystemBase() {
         }
 
         // So it definitely gets to bottom
-        return motor.encoder.position * constants.liftEncoderRatio
+        return 0.0//motor.encoder.position * constants.liftEncoderRatio
     }
 
     fun setMotor(speed: Double) {
@@ -59,7 +59,7 @@ object Lift : SubsystemBase() {
             return
         }
 
-        motor.set(speed)
+        //motor.set(speed)
     }
 
     fun atBottom(): Boolean {
@@ -71,6 +71,6 @@ object Lift : SubsystemBase() {
     }
 
     fun stop() {
-        motor.stopMotor()
+        //motor.stopMotor()
     }
 }

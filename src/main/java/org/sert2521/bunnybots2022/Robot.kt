@@ -63,8 +63,8 @@ object Robot : TimedRobot() {
 
     override fun autonomousInit() {
         //currAuto = Input.getAuto()
-        Drivetrain.setNewPose(Pose2d())
-        Input.getAuto()?.schedule()
+        //Drivetrain.setNewPose(Pose2d())
+        //Input.getAuto()?.schedule()
         //fillRow.schedule()
     }
 

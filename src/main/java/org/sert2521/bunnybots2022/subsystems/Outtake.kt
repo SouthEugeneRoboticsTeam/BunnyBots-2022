@@ -13,9 +13,9 @@ import org.sert2521.bunnybots2022.constants
 // This behaviour (using periodic to control motors) is not consistent with other subsystems
 // I am testing different styles for bunnybots
 object Outtake : SubsystemBase(), Reloadable {
-    private val flapMotor = CANSparkMax(constants.outtakeFlapMotorID, CANSparkMaxLowLevel.MotorType.kBrushed)
-    private val indexingMotor = CANSparkMax(constants.outtakeIndexingMotorID, CANSparkMaxLowLevel.MotorType.kBrushed)
-    private val indexerEncoder = indexingMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096)
+    //private val flapMotor = CANSparkMax(constants.outtakeFlapMotorID, CANSparkMaxLowLevel.MotorType.kBrushed)
+    //private val indexingMotor = CANSparkMax(constants.outtakeIndexingMotorID, CANSparkMaxLowLevel.MotorType.kBrushed)
+    //private val indexerEncoder = indexingMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096)
 
     private lateinit var indexerPID: PIDController
 
@@ -26,8 +26,8 @@ object Outtake : SubsystemBase(), Reloadable {
     var speedSetpoint = 0.0
 
     init {
-        flapMotor.inverted = true
-        indexingMotor.inverted = true
+        //flapMotor.inverted = true
+        //indexingMotor.inverted = true
 
         setPID()
 
@@ -41,27 +41,27 @@ object Outtake : SubsystemBase(), Reloadable {
     override fun periodic() {
         if (openingFlap) {
             if (!isOpen()) {
-                flapMotor.set(constants.outtakeFlapSpeed)
+                //flapMotor.set(constants.outtakeFlapSpeed)
             } else {
-                flapMotor.stopMotor()
+                //flapMotor.stopMotor()
             }
         } else {
             if (!isClosed()) {
-                flapMotor.set(-constants.outtakeFlapSpeed)
+                //flapMotor.set(-constants.outtakeFlapSpeed)
             } else {
-                flapMotor.stopMotor()
+                //flapMotor.stopMotor()
             }
         }
 
-        indexingMotor.set(indexerPID.calculate(getSpinSpeed(), speedSetpoint) + speedSetpoint * constants.outtakeF)
+        //indexingMotor.set(indexerPID.calculate(getSpinSpeed(), speedSetpoint) + speedSetpoint * constants.outtakeF)
     }
 
     fun getSpinAmount(): Double {
-        return indexerEncoder.position * constants.outtakeConversionFactor
+        return 0.0//indexerEncoder.position * constants.outtakeConversionFactor
     }
 
     private fun getSpinSpeed(): Double {
-        return indexerEncoder.velocity * constants.outtakeConversionFactor
+        return 0.0//indexerEncoder.velocity * constants.outtakeConversionFactor
     }
 
     fun isOpen(): Boolean {
