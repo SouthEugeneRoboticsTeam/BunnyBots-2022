@@ -11,7 +11,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator
 import org.sert2521.bunnybots2022.commands.auto.DrivePath
 import kotlin.math.PI
 
-data class SwerveModuleData(val position: Translation2d, val powerMotorID: Int, val angleMotorID: Int, val angleEncoderID: Int, val angleOffset: Double)
+data class SwerveModuleData(val position: Translation2d, val powerMotorID: Int, val angleMotorID: Int, val angleEncoderID: Int, val angleOffset: Double, val inverted: Boolean)
 
 object TunableConstants {
     // Re run sysid
@@ -19,7 +19,7 @@ object TunableConstants {
     val swervePowerV = TunableNumber("Swerve Power V", 4.601311978)
     val swervePowerA = TunableNumber("Swerve Power A", 0.159883071)
 
-    val swervePowerP = TunableNumber("Swerve Power P", 2.730003958)
+    val swervePowerP = TunableNumber("Swerve Power P", 0.0)//2.730003958)
     val swervePowerI = TunableNumber("Swerve Power I", 0.0)
     val swervePowerD = TunableNumber("Swerve Power D", 0.0)
 
@@ -60,10 +60,10 @@ class Constants {
     // (diagonal length / 4) * sqrt of 2
     val halfSideLength = (0.885 / 4) * 1.41421356237
     val swerveModuleData = mutableListOf(
-        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.36 - (PI)),
-        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29),
-        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.82),
-        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.86))
+        SwerveModuleData(Translation2d(halfSideLength, -halfSideLength), 5, 2, 17, 5.36 - PI, false),
+        SwerveModuleData(Translation2d(-halfSideLength, -halfSideLength), 6, 10, 16, 0.29, false),
+        SwerveModuleData(Translation2d(halfSideLength, halfSideLength), 7, 1, 15, 4.82, true),
+        SwerveModuleData(Translation2d(-halfSideLength, halfSideLength), 8, 11, 14, 4.86, true))
 
     val swervePowerS = TunableConstants.swervePowerS.value
     val swervePowerV = TunableConstants.swervePowerV.value
@@ -104,33 +104,33 @@ class Constants {
     val outtakeD = TunableConstants.outtakeD.value
     val outtakeF = TunableConstants.outtakeF.value
 
-    // Figure out the divide by 10
     // PI * diameter / (gear ratio * counts per rev)
     val powerEncoderMultiplierPosition = (PI * 0.1016 / (8.14 * 2048))
+    // Divided by ten to convert timescale
     val powerEncoderMultiplierVelocity = (PI * 0.1016 / (8.14 * 2048 / 10))
 
     // Degrees to radians
     val angleEncoderMultiplier = 0.01745329251
 
-    val powerDeadband = 0.05
-    val rotDeadband = 0.05
-    val joystickDeadband = 0.05
+    val powerDeadband = 0.1
+    val rotDeadband = 0.1
+    val joystickDeadband = 0.1
 
-    val driveSpeed = 2.5
-    val rotSpeed = 3.5
+    val driveSpeed = 1.0
+    val rotSpeed = 1.0
 
     val joystickChangeSpeed = 0.4
 
     val rumbleFactor = 0.4
 
-    val camName = "Apriltag"
+    val camName = "AprilTag"
     val targetTimeout = 0.7
-    val tagPose = Pose3d(1.0, 0.0, 0.0, Rotation3d(0.0, PI, 0.0))
-    val cameraTrans = Transform3d(Translation3d(halfSideLength, 0.0, 0.0), Rotation3d(0.0, 0.0, 0.0))
+    val tagPose = Pose3d(0.0, 0.0, 0.0, Rotation3d(0.0, 0.0, 0.0))
+    val cameraTrans = Transform3d(Translation3d(halfSideLength, halfSideLength, 0.0), Rotation3d(0.0, 0.0, PI))
 
-    val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.0025)
+    val stateDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.01, 0.01, 0.025)
     val localDeviations: Matrix<N1, N1> = MatBuilder(Nat.N1(), Nat.N1()).fill(0.02)
-    val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(2.5, 2.5, 2.5)
+    val globalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 2.5)
     val startGlobalDeviations: Matrix<N3, N1> = MatBuilder(Nat.N3(), Nat.N1()).fill(0.0, 0.0, 0.0)
 
     val trajectoryConfig = TrajectoryConfig(1.0, 1.5)

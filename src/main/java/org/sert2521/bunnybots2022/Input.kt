@@ -44,6 +44,10 @@ object Input {
 
     private val buttonOuttake = JoystickButton(gunnerController, 13)
 
+    var camOff = false
+        private set
+        get() = driverController.aButton
+
     init {
         autoChooser.setDefaultOption("Nothing", null)
         autoChooser.addOption("3 Tube", DrivePath(Pose2d(0.0, 0.0, Rotation2d(PI / 2)),

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.MotorSafety
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import org.photonvision.PhotonCamera
 import org.photonvision.targeting.PhotonPipelineResult
+import org.sert2521.bunnybots2022.Input
 import org.sert2521.bunnybots2022.Reloadable
 import org.sert2521.bunnybots2022.SwerveModuleData
 import org.sert2521.bunnybots2022.constants
@@ -32,6 +33,7 @@ class SwerveModule(val powerMotor: TalonFX,
                    private val angleOffset: Double,
                    private val anglePID: PIDController,
                    private val centerRotation: Rotation2d,
+                   private val inverted: Boolean,
                    var state: SwerveModuleState,
                    shouldOptimize: Boolean) : MotorSafety() {
     var doesOptimize = shouldOptimize
@@ -50,15 +52,27 @@ class SwerveModule(val powerMotor: TalonFX,
     }
 
     private fun getDistance(): Double {
-        return powerMotor.selectedSensorPosition * constants.powerEncoderMultiplierPosition
+        return if (!inverted) {
+            powerMotor.selectedSensorPosition * constants.powerEncoderMultiplierPosition
+        } else {
+            -powerMotor.selectedSensorPosition * constants.powerEncoderMultiplierPosition
+        }
     }
 
     private fun getVelocity(): Double {
-        return powerMotor.selectedSensorVelocity * constants.powerEncoderMultiplierVelocity
+        return if (!inverted) {
+            powerMotor.selectedSensorVelocity * constants.powerEncoderMultiplierVelocity
+        } else {
+            -powerMotor.selectedSensorVelocity * constants.powerEncoderMultiplierVelocity
+        }
     }
 
     private fun getAngle(): Rotation2d {
-        return Rotation2d(angleEncoder.absolutePosition * constants.angleEncoderMultiplier - angleOffset)
+        return if (inverted) {
+            Rotation2d(-(angleEncoder.absolutePosition * constants.angleEncoderMultiplier - angleOffset))
+        } else {
+            Rotation2d(angleEncoder.absolutePosition * constants.angleEncoderMultiplier - angleOffset)
+        }
     }
 
     fun setOptimize(value: Boolean) {
@@ -89,7 +103,13 @@ class SwerveModule(val powerMotor: TalonFX,
         val feedforward = powerFeedforward.calculate(optimized.speedMetersPerSecond)
         val pid = powerPID.calculate(state.speedMetersPerSecond, optimized.speedMetersPerSecond)
         // Figure out voltage stuff
-        powerMotor.set(ControlMode.PercentOutput, (feedforward + pid) / 12.0)
+        // Could multiply by cos angle
+        // Why isn't motor.inverted working
+        if (!inverted) {
+            powerMotor.set(ControlMode.PercentOutput, (feedforward + pid) / 12.0)
+        } else {
+            powerMotor.set(ControlMode.PercentOutput, -(feedforward + pid) / 12.0)
+        }
         angleMotor.set(anglePID.calculate(state.angle.radians, optimized.angle.radians))
     }
 
@@ -182,6 +202,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
             moduleData.angleOffset,
             PIDController(constants.swerveAngleP, constants.swerveAngleI, constants.swerveAngleD),
             Rotation2d(atan2(moduleData.position.y, moduleData.position.x)),
+            moduleData.inverted,
             SwerveModuleState(),
             doesOptimize)
     }
@@ -201,7 +222,7 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
     override fun periodic() {
         val res = cam.latestResult
-        if (res != prevRes) {
+        if (res != prevRes && !Input.camOff) {
             if (res.hasTargets()) {
                 val camToTargetTrans = res.bestTarget.bestCameraToTarget
                 val camPose = constants.tagPose.transformBy(camToTargetTrans.inverse())
@@ -215,7 +236,9 @@ object Drivetrain : SubsystemBase(), Reloadable {
 
         for (module in modules) {
             module.updateState()
-            positions.add(module.position)
+            val pos = module.position
+            pos.angle += Rotation2d(PI / 2)
+            positions.add(pos)
         }
 
         val positionsArray = positions.toTypedArray()

@@ -77,6 +77,8 @@ class JoystickDrive(private val fieldOrientated: Boolean) : CommandBase() {
         }
 
         if (x.pow(2) + y.pow(2) <= constants.powerDeadband * constants.powerDeadband && abs(rot) <= constants.rotDeadband) {
+            // Fix
+            // Drivetrain.enterBrakePos()
             Drivetrain.stop()
         } else {
             if (fieldOrientated) {
